@@ -1,6 +1,7 @@
 const dotenv = require("dotenv");
 
 dotenv.config();
+
 if (!process.env.JWT_SECRET) {
   console.error("JWT_SECRET is missing in backend .env");
   process.exit(1);
@@ -25,7 +26,12 @@ const helmet = require("helmet");
 const app = express();
 
 const PORT = process.env.PORT || 5000;
+const HOST = "0.0.0.0";
 
+// Security middleware
+app.use(helmet());
+
+// CORS
 app.use(
   cors({
     origin: process.env.FRONTEND_URL || "http://localhost:5173",
@@ -33,19 +39,24 @@ app.use(
   })
 );
 
+// Body parsing
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+// Health check
+app.get("/api/health", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "GSPL Employee Directory Backend is running",
+  });
+});
+
+// API routes
 app.use("/api/employees", employeeRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/import", importRoutes);
-app.use(helmet());
-app.use(
-  cors({
-    origin: process.env.FRONTEND_URL,
-  })
-);
 
 // Global error handler
 app.use((err, req, res, next) => {
@@ -78,15 +89,10 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.get("/api/health", (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: "GSPL Employee Directory Backend is running",
-  });
-});
+// Connect MongoDB
 connectDB();
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+// Start server
+app.listen(PORT, HOST, () => {
+  console.log(`Server running on http://${HOST}:${PORT}`);
 });
-
