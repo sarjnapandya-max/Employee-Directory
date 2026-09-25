@@ -22,10 +22,11 @@ function PublicDirectory() {
   const [sortOrder, setSortOrder] = useState("asc");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [totalEmployees, setTotalEmployees] = useState(0);
   const [errorDetails, setErrorDetails] = useState([]);
+  const [totalEmployees, setTotalEmployees] = useState(0);
+  const [itemsPerPage, setItemsPerPage] = useState(25);
 
-  const itemsPerPage = 10;
+
 
   useEffect(() => {
     const fetchEmployees = async () => {
@@ -64,7 +65,7 @@ function PublicDirectory() {
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [searchTerm, sortBy, sortOrder, currentPage]);
+  }, [searchTerm, sortBy, sortOrder, currentPage, itemsPerPage]);
 
   const handleSearch = (value) => {
     setSearchTerm(value);
@@ -100,240 +101,285 @@ function PublicDirectory() {
       </header>
 
       {/* Main */}
-      <main className="max-w-7xl mx-auto px-6 py-8">
-        {/* Title */}
-        <div className="mb-6">
-          <h2 className="text-2xl font-semibold text-gray-800">
-            Employee Directory
-          </h2>
+      <main className="min-h-screen bg-slate-100 px-6 py-8">
 
-          <p className="mt-1 text-sm text-gray-500">
-            Search and find employee contact information
-          </p>
-        </div>
+  <div className="mb-8">
+    <div className="mb-3 h-1 w-16 rounded-full bg-blue-600"></div>
 
-        {/* Search */}
-        <div className="bg-white rounded-lg shadow-sm border p-5 mb-6">
-          <div className="max-w-xl">
-            <label
-              htmlFor="search"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
-              Search Employees
-            </label>
+    <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+      GSPL Employee Directory
+    </h1>
 
-            <input
-              id="search"
-              type="text"
-              placeholder="Search by name, department, designation..."
-              value={searchTerm}
-              onChange={(e) => handleSearch(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-            />
-          </div>
-        </div>
+    <p className="mt-2 text-base text-slate-600">
+      Employee Contact & Extension Directory
+    </p>
+  </div>
+
+  {/* Search */}
+
+<div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5 mb-6">
+
+  <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-5">
+
+    {/* Show Entries */}
+    <div>
+      <label
+        htmlFor="entriesPerPage"
+        className="block text-sm font-semibold text-slate-700 mb-2"
+      >
+        Show entries
+      </label>
+
+      <select
+        id="entriesPerPage"
+        value={itemsPerPage}
+        onChange={(e) => {
+          setItemsPerPage(Number(e.target.value));
+          setCurrentPage(1);
+        }}
+        className="w-28 rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+      >
+        <option value={10}>10</option>
+        <option value={25}>25</option>
+        <option value={50}>50</option>
+        <option value={100}>100</option>
+      </select>
+    </div>
+
+    {/* Search */}
+    <div className="w-full md:max-w-md">
+      <label
+        htmlFor="search"
+        className="block text-sm font-semibold text-slate-700 mb-2"
+      >
+        Search employees
+      </label>
+
+      <div className="relative">
+        <input
+          id="search"
+          type="text"
+          value={searchTerm}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            setCurrentPage(1);
+          }}
+          placeholder="Search by name, department, designation..."
+          className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 pr-10 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+        />
+
+        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+          🔍
+        </span>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+   
 
         {/* Table */}
-        <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left">
-              <thead className="bg-gray-50 border-b">
-                <tr>
-                  <th className="px-5 py-4 font-semibold text-gray-700">
-                    Sr. No.
-                  </th>
+       <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+  <div className="overflow-x-auto">
+    <table className="w-full text-sm text-left">
+      <thead className="bg-slate-800 text-white">
+        <tr>
+          <th className="px-5 py-4 font-semibold whitespace-nowrap">
+            Sr. No.
+          </th>
 
-                  <th className="px-5 py-4 font-semibold text-gray-700">
-                    <button
-                      type="button"
-                      onClick={() => handleSort("employeeName")}
-                      className="flex items-center gap-2 hover:text-blue-600"
-                    >
-                      Employee Name
-                      {sortBy === "employeeName" && (
-                        <span>
-                          {sortOrder === "asc" ? "↑" : "↓"}
-                        </span>
-                      )}
-                    </button>
-                  </th>
+          <th className="px-5 py-4 font-semibold whitespace-nowrap">
+            <button
+              type="button"
+              onClick={() => handleSort("employeeName")}
+              className="flex items-center gap-2 hover:text-blue-200 transition"
+            >
+              Employee Name
+              {sortBy === "employeeName" && (
+                <span>
+                  {sortOrder === "asc" ? "↑" : "↓"}
+                </span>
+              )}
+            </button>
+          </th>
 
-                  <th className="px-5 py-4 font-semibold text-gray-700">
-                    <button
-                      type="button"
-                      onClick={() => handleSort("designation")}
-                      className="flex items-center gap-2 hover:text-blue-600"
-                    >
-                      Designation
-                      {sortBy === "designation" && (
-                        <span>
-                          {sortOrder === "asc" ? "↑" : "↓"}
-                        </span>
-                      )}
-                    </button>
-                  </th>
+          <th className="px-5 py-4 font-semibold whitespace-nowrap">
+            <button
+              type="button"
+              onClick={() => handleSort("designation")}
+              className="flex items-center gap-2 hover:text-blue-200 transition"
+            >
+              Designation
+              {sortBy === "designation" && (
+                <span>
+                  {sortOrder === "asc" ? "↑" : "↓"}
+                </span>
+              )}
+            </button>
+          </th>
 
-                  <th className="px-5 py-4 font-semibold text-gray-700">
-                    <button
-                      type="button"
-                      onClick={() => handleSort("department")}
-                      className="flex items-center gap-2 hover:text-blue-600"
-                    >
-                      Department
-                      {sortBy === "department" && (
-                        <span>
-                          {sortOrder === "asc" ? "↑" : "↓"}
-                        </span>
-                      )}
-                    </button>
-                  </th>
+          <th className="px-5 py-4 font-semibold whitespace-nowrap">
+            <button
+              type="button"
+              onClick={() => handleSort("department")}
+              className="flex items-center gap-2 hover:text-blue-200 transition"
+            >
+              Department
+              {sortBy === "department" && (
+                <span>
+                  {sortOrder === "asc" ? "↑" : "↓"}
+                </span>
+              )}
+            </button>
+          </th>
 
-                  <th className="px-5 py-4 font-semibold text-gray-700">
-                    <button
-                      type="button"
-                      onClick={() => handleSort("company")}
-                      className="flex items-center gap-2 hover:text-blue-600"
-                    >
-                      Company
-                      {sortBy === "company" && (
-                        <span>
-                          {sortOrder === "asc" ? "↑" : "↓"}
-                        </span>
-                      )}
-                    </button>
-                  </th>
+          <th className="px-5 py-4 font-semibold whitespace-nowrap">
+            <button
+              type="button"
+              onClick={() => handleSort("company")}
+              className="flex items-center gap-2 hover:text-blue-200 transition"
+            >
+              Company
+              {sortBy === "company" && (
+                <span>
+                  {sortOrder === "asc" ? "↑" : "↓"}
+                </span>
+              )}
+            </button>
+          </th>
 
-                  <th className="px-5 py-4 font-semibold text-gray-700">
-                    Extension
-                  </th>
+          <th className="px-5 py-4 font-semibold whitespace-nowrap">
+            Extension
+          </th>
 
-                  <th className="px-5 py-4 font-semibold text-gray-700">
-                    Mobile No.
-                  </th>
-                </tr>
-              </thead>
+          <th className="px-5 py-4 font-semibold whitespace-nowrap">
+            Mobile No.
+          </th>
+        </tr>
+      </thead>
 
-              <tbody>
-                {loading ? (
-                  <tr>
-                    <td
-                      colSpan="7"
-                      className="px-5 py-12 text-center text-gray-500"
-                    >
-                      Loading employees...
-                    </td>
-                  </tr>
-                ) : error ? (
-                  <tr>
-                    <td
-                      colSpan="7"
-                      className="px-5 py-12 text-center text-red-500"
-                    >
-                      {error}
-                    </td>
-                  </tr>
-                ) : employees.length === 0 ? (
-                  <tr>
-                    <td
-                      colSpan="7"
-                      className="px-5 py-12 text-center text-gray-500"
-                    >
-                      No employees found
-                    </td>
-                  </tr>
-                ) : (
-                  employees.map((employee, index) => (
-                    <tr
-                      key={employee._id}
-                      className="border-b last:border-b-0 hover:bg-gray-50"
-                    >
-                      <td className="px-5 py-4">
-                        {(currentPage - 1) * itemsPerPage + index + 1}
-                      </td>
+      <tbody className="divide-y divide-slate-100">
+        {loading ? (
+          <tr>
+            <td
+              colSpan="7"
+              className="px-5 py-12 text-center text-slate-500"
+            >
+              Loading employees...
+            </td>
+          </tr>
+        ) : error ? (
+          <tr>
+            <td
+              colSpan="7"
+              className="px-5 py-12 text-center text-red-500"
+            >
+              {error}
+            </td>
+          </tr>
+        ) : employees.length === 0 ? (
+          <tr>
+            <td
+              colSpan="7"
+              className="px-5 py-12 text-center text-slate-500"
+            >
+              No employees found
+            </td>
+          </tr>
+        ) : (
+          employees.map((employee, index) => (
+            <tr
+              key={employee._id}
+              className="hover:bg-blue-50/50 transition-colors"
+            >
+              <td className="px-5 py-4 text-slate-500 font-medium">
+                {(currentPage - 1) * itemsPerPage + index + 1}
+              </td>
 
-                      <td className="px-5 py-4 font-medium text-gray-800">
-                        {employee.employeeName}
-                      </td>
+              <td className="px-5 py-4 font-semibold text-slate-800 whitespace-nowrap">
+                {employee.employeeName}
+              </td>
 
-                      <td className="px-5 py-4">
-                        {employee.designation}
-                      </td>
+              <td className="px-5 py-4 text-slate-600">
+                {employee.designation}
+              </td>
 
-                      <td className="px-5 py-4">
-                        {employee.department}
-                      </td>
+              <td className="px-5 py-4 text-slate-600">
+                {employee.department}
+              </td>
 
-                      <td className="px-5 py-4">
-                        {employee.company}
-                      </td>
+              <td className="px-5 py-4 text-slate-600">
+                {employee.company}
+              </td>
 
-                      <td className="px-5 py-4">
-                        {employee.extension}
-                      </td>
+              <td className="px-5 py-4 font-medium text-slate-700">
+                {employee.extension}
+              </td>
 
-                      <td className="px-5 py-4">
-                        {employee.mobileNo}
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+              <td className="px-5 py-4 text-slate-600 whitespace-nowrap">
+                {employee.mobileNo}
+              </td>
+            </tr>
+          ))
+        )}
+      </tbody>
+    </table>
+  </div>
 
           {/* Pagination */}
           {!loading && !error && totalEmployees > 0 && (
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-t px-5 py-4">
-              <p className="text-sm text-gray-500">
-                Showing{" "}
-                <span className="font-medium text-gray-700">
-                  {(currentPage - 1) * itemsPerPage + 1}
-                </span>{" "}
-                to{" "}
-                <span className="font-medium text-gray-700">
-                  {Math.min(
-                    currentPage * itemsPerPage,
-                    totalEmployees
-                  )}
-                </span>{" "}
-                of{" "}
-                <span className="font-medium text-gray-700">
-                  {totalEmployees}
-                </span>{" "}
-                employees
-              </p>
+  <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-slate-200 bg-white px-5 py-4">
 
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  disabled={currentPage === 1}
-                  onClick={() =>
-                    setCurrentPage((page) => page - 1)
-                  }
-                  className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  Previous
-                </button>
+    <p className="text-sm text-slate-500">
+      Showing{" "}
+      <span className="font-semibold text-slate-700">
+        {(currentPage - 1) * itemsPerPage + 1}
+      </span>{" "}
+      to{" "}
+      <span className="font-semibold text-slate-700">
+        {Math.min(currentPage * itemsPerPage, totalEmployees)}
+      </span>{" "}
+      of{" "}
+      <span className="font-semibold text-slate-700">
+        {totalEmployees}
+      </span>{" "}
+      employees
+    </p>
 
-                <span className="px-3 text-sm text-gray-600">
-                  Page {currentPage} of {totalPages}
-                </span>
+    <div className="flex items-center gap-2">
 
-                <button
-                  type="button"
-                  disabled={currentPage === totalPages}
-                  onClick={() =>
-                    setCurrentPage((page) => page + 1)
-                  }
-                  className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  Next
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-      </main>
+      <button
+        type="button"
+        disabled={currentPage === 1}
+        onClick={() =>
+          setCurrentPage((page) => page - 1)
+        }
+        className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:border-slate-400 disabled:cursor-not-allowed disabled:opacity-40"
+      >
+        Previous
+      </button>
+
+      <span className="rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700">
+        Page {currentPage} of {totalPages}
+      </span>
+
+      <button
+        type="button"
+        disabled={currentPage === totalPages}
+        onClick={() =>
+          setCurrentPage((page) => page + 1)
+        }
+        className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:border-slate-400 disabled:cursor-not-allowed disabled:opacity-40"
+      >
+        Next
+      </button>
+
+    </div>
+  </div>
+)}
+                  </div>
+              </main>
     </div>
   );
 }
@@ -559,33 +605,48 @@ function AdminDashboard() {
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
-      <header className="bg-white border-b">
-        <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-800">
-              GSPL Employee Directory
-            </h1>
+     <header className="bg-slate-900 border-b border-slate-800">
+  <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
 
-            <p className="mt-1 text-sm text-gray-500">
-              Super Admin Dashboard
-            </p>
-          </div>
+    <div>
+      <div className="mb-2 h-1 w-12 rounded-full bg-blue-500"></div>
 
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-gray-600">
-              {adminUser.username || "Admin"}
-            </span>
+      <h1 className="text-2xl font-bold text-white">
+        GSPL Employee Directory
+      </h1>
 
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
-            >
-              Logout
-            </button>
-          </div>
-        </div>
-      </header>
+      <p className="mt-1 text-sm text-slate-300">
+        Super Admin Dashboard
+      </p>
+    </div>
+
+    <div className="flex items-center gap-4">
+
+      <div className="hidden sm:block text-right">
+        <p className="text-sm font-medium text-white">
+          {adminUser.username || "Admin"}
+        </p>
+
+        <p className="text-xs text-slate-400">
+          Super Admin
+        </p>
+      </div>
+
+      <button
+        type="button"
+        onClick={handleLogout}
+        className="rounded-lg border border-slate-600 bg-slate-800 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-700"
+      >
+        Logout
+      </button>
+
+    </div>
+
+  </div>
+</header>
+
+        
+
 
       {/* Main */}
       <main className="max-w-7xl mx-auto px-6 py-8">
@@ -1043,18 +1104,52 @@ const [importResult, setImportResult] = useState(null);
     </div>
   );
 }
-
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<PublicDirectory />} />
-        <Route path="/admin/login" element={<AdminLogin />} />
-        <Route path="/admin/dashboard" element={<ProtectedRoute> <AdminDashboard /> </ProtectedRoute>}/>
-        <Route path="/admin/import" element={<ProtectedRoute> <AdminImport /> </ProtectedRoute>}/>
-        <Route path="/admin/employees" element={<ProtectedRoute> <AdminEmployees /> </ProtectedRoute>}/>
-        <Route path="/admin/employees/edit/:id" element={<ProtectedRoute> <EditEmployee /> </ProtectedRoute>}/>
-      
+
+        <Route
+          path="/admin/login"
+          element={<AdminLogin />}
+        />
+
+        <Route
+          path="/admin/dashboard"
+          element={
+            <ProtectedRoute>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/import"
+          element={
+            <ProtectedRoute>
+              <AdminImport />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/employees"
+          element={
+            <ProtectedRoute>
+              <AdminEmployees />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/employees/edit/:id"
+          element={
+            <ProtectedRoute>
+              <EditEmployee />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );
