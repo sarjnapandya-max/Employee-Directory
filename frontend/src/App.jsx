@@ -603,7 +603,7 @@ function AdminLogin() {
             </div>
 
             <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-              GSPL Employee Directory
+              GTL Employee Directory
             </h1>
 
             <p className="mt-2 text-sm font-medium text-slate-500">
@@ -860,7 +860,7 @@ function AdminDashboard() {
 
             <div>
               <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-                GSPL Employee Directory
+                GTL Employee Directory
               </h1>
 
               <p className="mt-1 text-sm font-medium text-slate-500">
@@ -928,7 +928,7 @@ function AdminDashboard() {
               </h2>
 
               <p className="mt-1.5 text-sm text-slate-500">
-                Manage and monitor the GSPL employee directory.
+                Manage and monitor the GTL employee directory.
               </p>
             </div>
 
@@ -1358,7 +1358,7 @@ function AdminImport() {
 
             <div>
               <h1 className="text-xl font-bold tracking-tight text-slate-900">
-                GSPL Employee Directory
+                GTL Employee Directory
               </h1>
 
               <p className="mt-0.5 text-xs font-medium text-slate-500">

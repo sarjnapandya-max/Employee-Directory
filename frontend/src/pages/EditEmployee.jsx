@@ -200,7 +200,7 @@ function EditEmployee() {
 
               <div>
                 <h1 className="text-xl font-bold tracking-tight text-slate-900">
-                  GSPL Employee Directory
+                  GTL Employee Directory
                 </h1>
 
                 <p className="mt-0.5 text-xs font-medium text-slate-500">
@@ -240,7 +240,7 @@ function EditEmployee() {
 
             <div>
               <h1 className="text-xl font-bold tracking-tight text-slate-900">
-                GSPL Employee Directory
+                GTL Employee Directory
               </h1>
 
               <p className="mt-0.5 text-xs font-medium text-slate-500">

@@ -48,7 +48,7 @@ app.use(cookieParser());
 app.get("/api/health", (req, res) => {
   res.status(200).json({
     success: true,
-    message: "GSPL Employee Directory Backend is running",
+    message: "GTL Employee Directory Backend is running",
   });
 });
 

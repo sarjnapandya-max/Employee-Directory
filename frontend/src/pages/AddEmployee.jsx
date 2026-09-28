@@ -86,7 +86,7 @@ function AddEmployee() {
 
             <div>
               <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-                GSPL Employee Directory
+                GTL Employee Directory
               </h1>
 
               <p className="mt-1 text-sm font-medium text-slate-500">
