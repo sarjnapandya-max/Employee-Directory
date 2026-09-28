@@ -387,78 +387,80 @@ function PublicDirectory() {
                       </td>
                     </tr>
                   ) : (
-                    employees.map((employee, index) => (
-                      <tr
-                        key={employee._id}
-                        className={`border-b border-slate-200 transition-colors ${
-                          searchTerm.trim() &&
-                          (
-                            employee.employeeName
-                              ?.toLowerCase()
-                              .includes(searchTerm.toLowerCase()) ||
-                            employee.designation
-                              ?.toLowerCase()
-                              .includes(searchTerm.toLowerCase()) ||
-                            employee.department
-                              ?.toLowerCase()
-                              .includes(searchTerm.toLowerCase()) ||
-                            employee.company
-                              ?.toLowerCase()
-                              .includes(searchTerm.toLowerCase()) ||
-                            employee.extension
-                              ?.toLowerCase()
-                              .includes(searchTerm.toLowerCase()) ||
-                            employee.mobileNo
-                              ?.toLowerCase()
-                              .includes(searchTerm.toLowerCase())
-                          )
-                            ? "bg-blue-100 border-l-4 border-l-blue-600 font-semibold"
-                            : index % 2 === 0
-                              ? "bg-white hover:bg-blue-50"
-                              : "bg-slate-50 hover:bg-blue-50"
-                        }`}
-                      >
-                        <td className="border-r border-slate-200 px-4 py-3 text-sm text-slate-600 font-medium whitespace-nowrap">
-                          {(currentPage - 1) * itemsPerPage + index + 1}
-                        </td>
+                    employees.map((employee, index) => {
+  const search = searchTerm.trim().toLowerCase();
 
-                        {/* Employee Name - Increased */}
-                        <td className="border-r border-slate-200 px-4 py-3 text-base whitespace-nowrap">
-                          <span className="font-bold text-slate-900">
-                            {employee.employeeName}
-                          </span>
-                        </td>
+  const isMatch =
+    search &&
+    (
+      employee.employeeName
+        ?.toLowerCase()
+        .includes(search) ||
+      employee.designation
+        ?.toLowerCase()
+        .includes(search) ||
+      employee.department
+        ?.toLowerCase()
+        .includes(search) ||
+      employee.company
+        ?.toLowerCase()
+        .includes(search) ||
+      employee.extension
+        ?.toLowerCase()
+        .includes(search) ||
+      employee.mobileNo
+        ?.toLowerCase()
+        .includes(search)
+    );
 
-                        {/* Designation - Increased */}
-                        <td className="border-r border-slate-200 px-4 py-3 text-base text-slate-700">
-                          {employee.designation}
-                        </td>
+  return (
+    <tr
+      key={employee._id}
+      className={`border-b border-slate-200 transition-colors ${
+        isMatch
+          ? "!bg-blue-100 border-l-4 border-l-blue-600 font-semibold"
+          : index % 2 === 0
+            ? "bg-white hover:bg-blue-50"
+            : "bg-slate-50 hover:bg-blue-50"
+      }`}
+    >
+      <td className="border-r border-slate-200 px-4 py-3 text-slate-600 font-medium whitespace-nowrap">
+        {(currentPage - 1) * itemsPerPage + index + 1}
+      </td>
 
-                        {/* Department - Increased */}
-                        <td className="border-r border-slate-200 px-4 py-3 text-base text-slate-700">
-                          {employee.department}
-                        </td>
+      <td className="border-r border-slate-200 px-4 py-3 whitespace-nowrap">
+        <span className="font-bold text-slate-900">
+          {employee.employeeName}
+        </span>
+      </td>
 
-                        {/* Company - Increased */}
-                        <td className="border-r border-slate-200 px-4 py-3 text-base text-slate-700">
-                          {employee.company}
-                        </td>
+      <td className="border-r border-slate-200 px-4 py-3 text-slate-700">
+        {employee.designation}
+      </td>
 
-                        {/* Extension - Increased slightly */}
-                        <td className="border-r border-slate-200 px-4 py-3 whitespace-nowrap">
-                          <span className="inline-flex min-w-[58px] items-center justify-center rounded-md border border-blue-200 bg-blue-50 px-2.5 py-1 text-sm font-bold text-blue-800">
-                            {employee.extension}
-                          </span>
-                        </td>
+      <td className="border-r border-slate-200 px-4 py-3 text-slate-700">
+        {employee.department}
+      </td>
 
-                        {/* Mobile No. - Increased */}
-                        <td className="px-4 py-3 text-base whitespace-nowrap">
-                          <span className="font-medium text-slate-700">
-                            {employee.mobileNo}
-                          </span>
-                        </td>
-                      </tr>
-                    ))
+      <td className="border-r border-slate-200 px-4 py-3 text-slate-700">
+        {employee.company}
+      </td>
+
+      <td className="border-r border-slate-200 px-4 py-3 whitespace-nowrap">
+        <span className="inline-flex min-w-[58px] items-center justify-center rounded-md border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-bold text-blue-800">
+          {employee.extension}
+        </span>
+      </td>
+
+      <td className="px-4 py-3 whitespace-nowrap">
+        <span className="font-medium text-slate-700">
+          {employee.mobileNo}
+        </span>
+      </td>
+    </tr>
+  );
+})
+                      
                   )}
                 </tbody>
               </table>
