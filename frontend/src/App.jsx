@@ -10,6 +10,7 @@ import {
 } from "react-router-dom";
 import AdminEmployees from "./pages/AdminEmployees";
 import EditEmployee from "./pages/EditEmployee";
+import AddEmployee from "./pages/AddEmployee";
 
 // function PublicDirectory() {
 //   return (
@@ -25,8 +26,6 @@ function PublicDirectory() {
   const [errorDetails, setErrorDetails] = useState([]);
   const [totalEmployees, setTotalEmployees] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(25);
-
-
 
   useEffect(() => {
     const fetchEmployees = async () => {
@@ -51,7 +50,6 @@ function PublicDirectory() {
         setTotalPages(response.data?.totalPages || 1);
         setTotalEmployees(response.data?.totalEmployees || 0);
         setErrorDetails([]);
-
       } catch (error) {
         console.error("Failed to fetch employees:", error);
         setError("Unable to load employee directory.");
@@ -86,300 +84,449 @@ function PublicDirectory() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* Header */}
-      <header className="bg-white border-b">
-        <div className="max-w-7xl mx-auto px-6 py-5">
-          <h1 className="text-2xl font-bold text-gray-800">
-            GSPL Employee Directory
-          </h1>
+    <div className="min-h-screen bg-slate-100">
+      {/* ================= HEADER ================= */}
+      <header className="border-b border-slate-300 bg-white shadow-sm">
+        <div className="h-1.5 bg-blue-800"></div>
 
-          <p className="mt-1 text-sm text-gray-500">
-            Gujarat State Petronet Limited
-          </p>
+        <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6 py-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-800 shadow-sm">
+              <span className="text-lg font-extrabold text-white">
+                G
+              </span>
+            </div>
+
+            <div>
+              <h1 className="text-xl font-bold tracking-tight text-slate-900">
+                GTL Employee Directory
+              </h1>
+
+              <p className="mt-0.5 text-xs font-medium text-slate-500">
+                Gujarat State Petronet Limited
+              </p>
+            </div>
+          </div>
+
+          <div className="hidden items-center gap-3 sm:flex">
+            <div className="h-8 w-px bg-slate-200"></div>
+
+            <div className="text-right">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                Internal Portal
+              </p>
+
+              <p className="mt-0.5 text-xs font-semibold text-blue-800">
+                Employee Contact Directory
+              </p>
+            </div>
+          </div>
         </div>
       </header>
 
-      {/* Main */}
-      <main className="min-h-screen bg-slate-100 px-6 py-8">
+      {/* ================= MAIN ================= */}
+      <main className="min-h-screen bg-slate-100 px-4 py-5 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-[1600px]">
 
-  <div className="mb-8">
-    <div className="mb-3 h-1 w-16 rounded-full bg-blue-600"></div>
+          {/* ================= TITLE + TOP CONTROLS ================= */}
+          <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <div className="mb-2 h-1 w-16 rounded-full bg-blue-700"></div>
 
-    <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-      GSPL Employee Directory
-    </h1>
+              <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+                GTL Employee Directory
+              </h2>
 
-    <p className="mt-2 text-base text-slate-600">
-      Employee Contact & Extension Directory
-    </p>
-  </div>
+              <p className="mt-1 text-sm text-slate-600">
+                Employee Contact & Extension Directory
+              </p>
+            </div>
 
-  {/* Search */}
-
-<div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5 mb-6">
-
-  <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-5">
-
-    {/* Show Entries */}
-    <div>
-      <label
-        htmlFor="entriesPerPage"
-        className="block text-sm font-semibold text-slate-700 mb-2"
-      >
-        Show entries
-      </label>
-
-      <select
-        id="entriesPerPage"
-        value={itemsPerPage}
-        onChange={(e) => {
-          setItemsPerPage(Number(e.target.value));
-          setCurrentPage(1);
-        }}
-        className="w-28 rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-      >
-        <option value={10}>10</option>
-        <option value={25}>25</option>
-        <option value={50}>50</option>
-        <option value={100}>100</option>
-      </select>
-    </div>
-
-    {/* Search */}
-    <div className="w-full md:max-w-md">
-      <label
-        htmlFor="search"
-        className="block text-sm font-semibold text-slate-700 mb-2"
-      >
-        Search employees
-      </label>
-
-      <div className="relative">
-        <input
-          id="search"
-          type="text"
-          value={searchTerm}
-          onChange={(e) => {
-            setSearchTerm(e.target.value);
-            setCurrentPage(1);
-          }}
-          placeholder="Search by name, department, designation..."
-          className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 pr-10 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-        />
-
-        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
-          🔍
-        </span>
-      </div>
-    </div>
-
-  </div>
-
-</div>
-   
-
-        {/* Table */}
-       <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-  <div className="overflow-x-auto">
-    <table className="w-full text-sm text-left">
-      <thead className="bg-slate-800 text-white">
-        <tr>
-          <th className="px-5 py-4 font-semibold whitespace-nowrap">
-            Sr. No.
-          </th>
-
-          <th className="px-5 py-4 font-semibold whitespace-nowrap">
-            <button
-              type="button"
-              onClick={() => handleSort("employeeName")}
-              className="flex items-center gap-2 hover:text-blue-200 transition"
-            >
-              Employee Name
-              {sortBy === "employeeName" && (
-                <span>
-                  {sortOrder === "asc" ? "↑" : "↓"}
-                </span>
-              )}
-            </button>
-          </th>
-
-          <th className="px-5 py-4 font-semibold whitespace-nowrap">
-            <button
-              type="button"
-              onClick={() => handleSort("designation")}
-              className="flex items-center gap-2 hover:text-blue-200 transition"
-            >
-              Designation
-              {sortBy === "designation" && (
-                <span>
-                  {sortOrder === "asc" ? "↑" : "↓"}
-                </span>
-              )}
-            </button>
-          </th>
-
-          <th className="px-5 py-4 font-semibold whitespace-nowrap">
-            <button
-              type="button"
-              onClick={() => handleSort("department")}
-              className="flex items-center gap-2 hover:text-blue-200 transition"
-            >
-              Department
-              {sortBy === "department" && (
-                <span>
-                  {sortOrder === "asc" ? "↑" : "↓"}
-                </span>
-              )}
-            </button>
-          </th>
-
-          <th className="px-5 py-4 font-semibold whitespace-nowrap">
-            <button
-              type="button"
-              onClick={() => handleSort("company")}
-              className="flex items-center gap-2 hover:text-blue-200 transition"
-            >
-              Company
-              {sortBy === "company" && (
-                <span>
-                  {sortOrder === "asc" ? "↑" : "↓"}
-                </span>
-              )}
-            </button>
-          </th>
-
-          <th className="px-5 py-4 font-semibold whitespace-nowrap">
-            Extension
-          </th>
-
-          <th className="px-5 py-4 font-semibold whitespace-nowrap">
-            Mobile No.
-          </th>
-        </tr>
-      </thead>
-
-      <tbody className="divide-y divide-slate-100">
-        {loading ? (
-          <tr>
-            <td
-              colSpan="7"
-              className="px-5 py-12 text-center text-slate-500"
-            >
-              Loading employees...
-            </td>
-          </tr>
-        ) : error ? (
-          <tr>
-            <td
-              colSpan="7"
-              className="px-5 py-12 text-center text-red-500"
-            >
-              {error}
-            </td>
-          </tr>
-        ) : employees.length === 0 ? (
-          <tr>
-            <td
-              colSpan="7"
-              className="px-5 py-12 text-center text-slate-500"
-            >
-              No employees found
-            </td>
-          </tr>
-        ) : (
-          employees.map((employee, index) => (
-            <tr
-              key={employee._id}
-              className="hover:bg-blue-50/50 transition-colors"
-            >
-              <td className="px-5 py-4 text-slate-500 font-medium">
-                {(currentPage - 1) * itemsPerPage + index + 1}
-              </td>
-
-              <td className="px-5 py-4 font-semibold text-slate-800 whitespace-nowrap">
-                {employee.employeeName}
-              </td>
-
-              <td className="px-5 py-4 text-slate-600">
-                {employee.designation}
-              </td>
-
-              <td className="px-5 py-4 text-slate-600">
-                {employee.department}
-              </td>
-
-              <td className="px-5 py-4 text-slate-600">
-                {employee.company}
-              </td>
-
-              <td className="px-5 py-4 font-medium text-slate-700">
-                {employee.extension}
-              </td>
-
-              <td className="px-5 py-4 text-slate-600 whitespace-nowrap">
-                {employee.mobileNo}
-              </td>
-            </tr>
-          ))
-        )}
-      </tbody>
-    </table>
-  </div>
-
-          {/* Pagination */}
-          {!loading && !error && totalEmployees > 0 && (
-  <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-slate-200 bg-white px-5 py-4">
-
-    <p className="text-sm text-slate-500">
-      Showing{" "}
-      <span className="font-semibold text-slate-700">
-        {(currentPage - 1) * itemsPerPage + 1}
-      </span>{" "}
-      to{" "}
-      <span className="font-semibold text-slate-700">
-        {Math.min(currentPage * itemsPerPage, totalEmployees)}
-      </span>{" "}
-      of{" "}
-      <span className="font-semibold text-slate-700">
-        {totalEmployees}
-      </span>{" "}
-      employees
-    </p>
-
-    <div className="flex items-center gap-2">
-
-      <button
-        type="button"
-        disabled={currentPage === 1}
-        onClick={() =>
-          setCurrentPage((page) => page - 1)
-        }
-        className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:border-slate-400 disabled:cursor-not-allowed disabled:opacity-40"
-      >
-        Previous
-      </button>
-
-      <span className="rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700">
-        Page {currentPage} of {totalPages}
-      </span>
-
-      <button
-        type="button"
-        disabled={currentPage === totalPages}
-        onClick={() =>
-          setCurrentPage((page) => page + 1)
-        }
-        className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:border-slate-400 disabled:cursor-not-allowed disabled:opacity-40"
-      >
-        Next
-      </button>
-
-    </div>
-  </div>
-)}
+            <div className="flex flex-wrap items-center gap-2">
+              {/* Total Employees */}
+              {!loading && !error && (
+                <div className="flex h-10 items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3">
+                  <div className="flex h-7 min-w-7 items-center justify-center rounded-md bg-blue-800 px-1.5 text-xs font-bold text-white">
+                    {totalEmployees}
                   </div>
-              </main>
+
+                  <span className="text-xs font-bold text-blue-800">
+                    Total Employees
+                  </span>
+                </div>
+              )}
+
+              {/* Show Entries */}
+              <div className="flex h-10 items-center gap-2 rounded-lg border border-slate-300 bg-white px-3">
+                <span className="text-xs font-bold text-slate-500">
+                  Show
+                </span>
+
+                <select
+                  id="entriesPerPage"
+                  value={itemsPerPage}
+                  onChange={(e) => {
+                    setItemsPerPage(Number(e.target.value));
+                    setCurrentPage(1);
+                  }}
+                  className="rounded-md border border-slate-300 bg-white px-2 py-1 text-xs font-semibold text-slate-700 outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+                >
+                  <option value={10}>10</option>
+                  <option value={25}>25</option>
+                  <option value={50}>50</option>
+                  <option value={100}>100</option>
+                </select>
+
+                <span className="text-xs font-medium text-slate-500">
+                  entries
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* ================= COMPACT SEARCH ================= */}
+          <div className="mb-4 rounded-xl border border-slate-300 bg-white p-3 shadow-sm">
+            <div className="relative">
+              {/* Search Icon */}
+              <div className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="m21 21-4.35-4.35m2.1-5.4a7.5 7.5 0 1 1-15 0Z"
+                  />
+                </svg>
+              </div>
+
+              <input
+                id="search"
+                type="text"
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
+                placeholder="Search by name, designation, department, company, extension or mobile..."
+                className="w-full rounded-lg border border-slate-300 bg-white py-2.5 pl-11 pr-24 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+              />
+
+              {/* Clear Button */}
+              {searchTerm && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearchTerm("");
+                    setCurrentPage(1);
+                  }}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md px-2.5 py-1 text-xs font-bold text-slate-500 transition hover:bg-slate-100 hover:text-slate-800"
+                >
+                  Clear
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* ================= DIRECTORY TABLE ================= */}
+          <section className="overflow-hidden rounded-xl border border-slate-300 bg-white shadow-sm">
+
+
+            {/* Table */}
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[1050px] text-left text-sm">
+                <thead className="sticky top-0 z-10 bg-slate-700 text-white shadow-sm">
+                  <tr>
+                    <th className="border-r border-slate-600 px-4 py-3 text-xs font-bold uppercase tracking-wide whitespace-nowrap">
+                      Sr. No.
+                    </th>
+
+                    <th
+                      className={`border-r border-slate-600 px-4 py-3 text-xs font-bold uppercase tracking-wide whitespace-nowrap ${
+                        sortBy === "employeeName"
+                          ? "bg-blue-800"
+                          : ""
+                      }`}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => handleSort("employeeName")}
+                        className="flex items-center gap-2 transition hover:text-blue-200"
+                      >
+                        Employee Name
+
+                        {sortBy === "employeeName" && (
+                          <span className="text-base leading-none text-blue-200">
+                            {sortOrder === "asc" ? "↑" : "↓"}
+                          </span>
+                        )}
+                      </button>
+                    </th>
+
+                    <th
+                      className={`border-r border-slate-600 px-4 py-3 text-xs font-bold uppercase tracking-wide whitespace-nowrap ${
+                        sortBy === "designation"
+                          ? "bg-blue-800"
+                          : ""
+                      }`}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => handleSort("designation")}
+                        className="flex items-center gap-2 transition hover:text-blue-200"
+                      >
+                        Designation
+
+                        {sortBy === "designation" && (
+                          <span className="text-base leading-none text-blue-200">
+                            {sortOrder === "asc" ? "↑" : "↓"}
+                          </span>
+                        )}
+                      </button>
+                    </th>
+
+                    <th
+                      className={`border-r border-slate-600 px-4 py-3 text-xs font-bold uppercase tracking-wide whitespace-nowrap ${
+                        sortBy === "department"
+                          ? "bg-blue-800"
+                          : ""
+                      }`}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => handleSort("department")}
+                        className="flex items-center gap-2 transition hover:text-blue-200"
+                      >
+                        Department
+
+                        {sortBy === "department" && (
+                          <span className="text-base leading-none text-blue-200">
+                            {sortOrder === "asc" ? "↑" : "↓"}
+                          </span>
+                        )}
+                      </button>
+                    </th>
+
+                    <th
+                      className={`border-r border-slate-600 px-4 py-3 text-xs font-bold uppercase tracking-wide whitespace-nowrap ${
+                        sortBy === "company"
+                          ? "bg-blue-800"
+                          : ""
+                      }`}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => handleSort("company")}
+                        className="flex items-center gap-2 transition hover:text-blue-200"
+                      >
+                        Company
+
+                        {sortBy === "company" && (
+                          <span className="text-base leading-none text-blue-200">
+                            {sortOrder === "asc" ? "↑" : "↓"}
+                          </span>
+                        )}
+                      </button>
+                    </th>
+
+                    <th className="border-r border-slate-600 px-4 py-3 text-xs font-bold uppercase tracking-wide whitespace-nowrap">
+                      Extension
+                    </th>
+
+                    <th className="px-4 py-3 text-xs font-bold uppercase tracking-wide whitespace-nowrap">
+                      Mobile No.
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {loading ? (
+                    <tr>
+                      <td
+                        colSpan="7"
+                        className="px-5 py-14 text-center text-slate-500"
+                      >
+                        <div className="flex flex-col items-center justify-center gap-3">
+                          <div className="h-7 w-7 animate-spin rounded-full border-4 border-slate-200 border-t-blue-600"></div>
+
+                          <span className="text-sm font-medium">
+                            Loading employees...
+                          </span>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : error ? (
+                    <tr>
+                      <td
+                        colSpan="7"
+                        className="px-5 py-14 text-center"
+                      >
+                        <p className="text-sm font-semibold text-red-600">
+                          {error}
+                        </p>
+                      </td>
+                    </tr>
+                  ) : employees.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan="7"
+                        className="px-5 py-14 text-center text-slate-500"
+                      >
+                        <p className="text-sm font-semibold">
+                          No employees found
+                        </p>
+
+                        <p className="mt-1 text-xs text-slate-400">
+                          Try changing your search.
+                        </p>
+                      </td>
+                    </tr>
+                  ) : (
+                    employees.map((employee, index) => (
+                      <tr
+                        key={employee._id}
+                        className={`border-b border-slate-200 transition-colors ${
+                          searchTerm.trim() &&
+                          (
+                            employee.employeeName
+                              ?.toLowerCase()
+                              .includes(searchTerm.toLowerCase()) ||
+                            employee.designation
+                              ?.toLowerCase()
+                              .includes(searchTerm.toLowerCase()) ||
+                            employee.department
+                              ?.toLowerCase()
+                              .includes(searchTerm.toLowerCase()) ||
+                            employee.company
+                              ?.toLowerCase()
+                              .includes(searchTerm.toLowerCase()) ||
+                            employee.extension
+                              ?.toLowerCase()
+                              .includes(searchTerm.toLowerCase()) ||
+                            employee.mobileNo
+                              ?.toLowerCase()
+                              .includes(searchTerm.toLowerCase())
+                          )
+                            ? "bg-blue-100 border-l-4 border-l-blue-600 font-semibold"
+                            : index % 2 === 0
+                              ? "bg-white hover:bg-blue-50"
+                              : "bg-slate-50 hover:bg-blue-50"
+                        }`}
+                      >
+                        <td className="border-r border-slate-200 px-4 py-3 text-sm text-slate-600 font-medium whitespace-nowrap">
+                          {(currentPage - 1) * itemsPerPage + index + 1}
+                        </td>
+
+                        {/* Employee Name - Increased */}
+                        <td className="border-r border-slate-200 px-4 py-3 text-base whitespace-nowrap">
+                          <span className="font-bold text-slate-900">
+                            {employee.employeeName}
+                          </span>
+                        </td>
+
+                        {/* Designation - Increased */}
+                        <td className="border-r border-slate-200 px-4 py-3 text-base text-slate-700">
+                          {employee.designation}
+                        </td>
+
+                        {/* Department - Increased */}
+                        <td className="border-r border-slate-200 px-4 py-3 text-base text-slate-700">
+                          {employee.department}
+                        </td>
+
+                        {/* Company - Increased */}
+                        <td className="border-r border-slate-200 px-4 py-3 text-base text-slate-700">
+                          {employee.company}
+                        </td>
+
+                        {/* Extension - Increased slightly */}
+                        <td className="border-r border-slate-200 px-4 py-3 whitespace-nowrap">
+                          <span className="inline-flex min-w-[58px] items-center justify-center rounded-md border border-blue-200 bg-blue-50 px-2.5 py-1 text-sm font-bold text-blue-800">
+                            {employee.extension}
+                          </span>
+                        </td>
+
+                        {/* Mobile No. - Increased */}
+                        <td className="px-4 py-3 text-base whitespace-nowrap">
+                          <span className="font-medium text-slate-700">
+                            {employee.mobileNo}
+                          </span>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Pagination */}
+            {!loading && !error && totalEmployees > 0 && (
+              <div className="flex flex-col gap-4 border-t border-slate-300 bg-slate-50 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+
+                <p className="text-sm text-slate-600">
+                  Showing{" "}
+                  <span className="font-bold text-slate-800">
+                    {(currentPage - 1) * itemsPerPage + 1}
+                  </span>{" "}
+                  to{" "}
+                  <span className="font-bold text-slate-800">
+                    {Math.min(
+                      currentPage * itemsPerPage,
+                      totalEmployees
+                    )}
+                  </span>{" "}
+                  of{" "}
+                  <span className="font-bold text-slate-800">
+                    {totalEmployees}
+                  </span>{" "}
+                  employees
+                </p>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    disabled={currentPage === 1}
+                    onClick={() =>
+                      setCurrentPage((page) => page - 1)
+                    }
+                    className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700 disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    Previous
+                  </button>
+
+                  <span className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-bold text-blue-700">
+                    Page {currentPage} of {totalPages}
+                  </span>
+
+                  <button
+                    type="button"
+                    disabled={currentPage === totalPages}
+                    onClick={() =>
+                      setCurrentPage((page) => page + 1)
+                    }
+                    className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700 disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            )}
+          </section>
+
+          {/* ================= FOOTER ================= */}
+          <div className="mt-5 text-center">
+            <p className="text-xs font-medium text-slate-400">
+              Gujarat State Petronet Limited • GTL Employee Directory
+            </p>
+          </div>
+
+        </div>
+      </main>
     </div>
   );
 }
@@ -437,93 +584,190 @@ function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
-      <div className="w-full max-w-md">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800">
-            GSPL Employee Directory
-          </h1>
+    <div className="min-h-screen bg-slate-100">
 
-          <p className="mt-2 text-gray-500">
-            Super Admin Login
-          </p>
-        </div>
+      {/* Top Accent */}
+      <div className="h-1.5 bg-blue-800"></div>
 
-        {/* Login Card */}
-        <div className="bg-white rounded-xl shadow-sm border p-8">
-          <h2 className="text-xl font-semibold text-gray-800 mb-6">
-            Admin Login
-          </h2>
+      <div className="flex min-h-[calc(100vh-6px)] items-center justify-center px-4 py-10">
 
-          <form onSubmit={handleLogin} className="space-y-5">
-            {/* Username */}
-            <div>
-              <label
-                htmlFor="username"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                Username
-              </label>
+        <div className="w-full max-w-md">
 
-              <input
-                id="username"
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="Enter username"
-                autoComplete="username"
-                className="w-full rounded-md border border-gray-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-              />
+          {/* ================= BRANDING ================= */}
+          <div className="mb-7 text-center">
+
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-blue-800 shadow-md">
+              <span className="text-2xl font-extrabold text-white">
+                G
+              </span>
             </div>
 
-            {/* Password */}
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                Password
-              </label>
+            <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+              GSPL Employee Directory
+            </h1>
 
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter password"
-                autoComplete="current-password"
-                className="w-full rounded-md border border-gray-300 px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-              />
+            <p className="mt-2 text-sm font-medium text-slate-500">
+              Gujarat State Petronet Limited
+            </p>
+
+          </div>
+
+          {/* ================= LOGIN CARD ================= */}
+          <div className="overflow-hidden rounded-2xl border border-slate-300 bg-white shadow-lg">
+
+            {/* Card Header */}
+            <div className="border-b border-slate-200 bg-slate-50 px-7 py-5">
+              <h2 className="text-xl font-bold text-slate-900">
+                Super Admin Login
+              </h2>
+
+              <p className="mt-1 text-sm text-slate-500">
+                Sign in to manage the employee directory.
+              </p>
             </div>
 
-            {/* Error */}
-            {error && (
-              <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
-                {error}
-              </div>
-            )}
+            {/* Form */}
+            <div className="px-7 py-7">
 
-            {/* Login Button */}
+              <form onSubmit={handleLogin} className="space-y-5">
+
+                {/* Username */}
+                <div>
+                  <label
+                    htmlFor="username"
+                    className="mb-2 block text-xs font-bold uppercase tracking-wide text-slate-600"
+                  >
+                    Username
+                  </label>
+
+                  <div className="relative">
+
+                    <div className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M15.75 6.75a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.5 20.25a7.5 7.5 0 0 1 15 0"
+                        />
+                      </svg>
+                    </div>
+
+                    <input
+                      id="username"
+                      type="text"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      placeholder="Enter username"
+                      autoComplete="username"
+                      className="w-full rounded-lg border border-slate-300 bg-white py-3 pl-11 pr-4 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+                    />
+
+                  </div>
+                </div>
+
+                {/* Password */}
+                <div>
+                  <label
+                    htmlFor="password"
+                    className="mb-2 block text-xs font-bold uppercase tracking-wide text-slate-600"
+                  >
+                    Password
+                  </label>
+
+                  <div className="relative">
+
+                    <div className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M16.5 10.5V8.25a4.5 4.5 0 0 0-9 0v2.25m-.75 0h10.5A1.5 1.5 0 0 1 18.75 12v7.5A1.5 1.5 0 0 1 17.25 21h-10.5a1.5 1.5 0 0 1-1.5-1.5V12a1.5 1.5 0 0 1 1.5-1.5Z"
+                        />
+                      </svg>
+                    </div>
+
+                    <input
+                      id="password"
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Enter password"
+                      autoComplete="current-password"
+                      className="w-full rounded-lg border border-slate-300 bg-white py-3 pl-11 pr-4 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+                    />
+
+                  </div>
+                </div>
+
+                {/* Error */}
+                {error && (
+                  <div className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3">
+
+                    <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-100 text-xs font-bold text-red-600">
+                      !
+                    </div>
+
+                    <p className="text-sm font-medium text-red-700">
+                      {error}
+                    </p>
+
+                  </div>
+                )}
+
+                {/* Login Button */}
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="flex w-full items-center justify-center rounded-lg bg-blue-800 px-4 py-3 font-bold text-white shadow-sm transition hover:bg-blue-900 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {loading ? (
+                    <span className="flex items-center gap-2">
+                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white"></span>
+                      Signing in...
+                    </span>
+                  ) : (
+                    "Sign In"
+                  )}
+                </button>
+
+              </form>
+
+            </div>
+          </div>
+
+          {/* ================= BACK TO DIRECTORY ================= */}
+          <div className="mt-6 text-center">
+
             <button
-              type="submit"
-              disabled={loading}
-              className="w-full rounded-md bg-blue-600 px-4 py-3 font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+              type="button"
+              onClick={() => navigate("/")}
+              className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-blue-700 transition hover:bg-blue-50 hover:text-blue-900"
             >
-              {loading ? "Signing in..." : "Sign In"}
+              <span>←</span>
+              Back to Employee Directory
             </button>
-          </form>
-        </div>
 
-        {/* Back to Directory */}
-        <div className="text-center mt-6">
-          <button
-            type="button"
-            onClick={() => navigate("/")}
-            className="text-sm text-blue-600 hover:text-blue-700"
-          >
-            ← Back to Employee Directory
-          </button>
+          </div>
+
+          {/* Footer */}
+          <p className="mt-5 text-center text-xs font-medium text-slate-400">
+            Gujarat State Petronet Limited • Internal Portal
+          </p>
+
         </div>
       </div>
     </div>
@@ -603,137 +847,359 @@ function AdminDashboard() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-slate-100">
       {/* Header */}
-     <header className="bg-slate-900 border-b border-slate-800">
-  <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
+      <header className="border-b border-slate-300 bg-white shadow-sm">
+        <div className="h-1.5 bg-blue-800"></div>
 
-    <div>
-      <div className="mb-2 h-1 w-12 rounded-full bg-blue-500"></div>
+        <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6 py-5">
+          <div className="flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-800 shadow-sm">
+              <span className="text-xl font-extrabold text-white">G</span>
+            </div>
 
-      <h1 className="text-2xl font-bold text-white">
-        GSPL Employee Directory
-      </h1>
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+                GSPL Employee Directory
+              </h1>
 
-      <p className="mt-1 text-sm text-slate-300">
-        Super Admin Dashboard
-      </p>
-    </div>
+              <p className="mt-1 text-sm font-medium text-slate-500">
+                Super Admin Dashboard
+              </p>
+            </div>
+          </div>
 
-    <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4">
+            <div className="hidden items-center gap-3 sm:flex">
+              <div className="h-9 w-px bg-slate-200"></div>
 
-      <div className="hidden sm:block text-right">
-        <p className="text-sm font-medium text-white">
-          {adminUser.username || "Admin"}
-        </p>
+              <div className="text-right">
+                <p className="text-sm font-bold text-slate-800">
+                  {adminUser.username || "Admin"}
+                </p>
 
-        <p className="text-xs text-slate-400">
-          Super Admin
-        </p>
-      </div>
+                <p className="mt-0.5 text-xs font-semibold uppercase tracking-wide text-blue-700">
+                  Super Admin
+                </p>
+              </div>
+            </div>
 
-      <button
-        type="button"
-        onClick={handleLogout}
-        className="rounded-lg border border-slate-600 bg-slate-800 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-700"
-      >
-        Logout
-      </button>
-
-    </div>
-
-  </div>
-</header>
-
-        
-
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 shadow-sm transition hover:border-red-200 hover:bg-red-50 hover:text-red-700"
+            >
+              <svg
+                className="h-4 w-4"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6A2.25 2.25 0 005.25 5.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M18 8.25L21.75 12 18 15.75M21.75 12H9"
+                />
+              </svg>
+              Logout
+            </button>
+          </div>
+        </div>
+      </header>
 
       {/* Main */}
-      <main className="max-w-7xl mx-auto px-6 py-8">
-        <div className="mb-8">
-          <h2 className="text-2xl font-semibold text-gray-800">
-            Dashboard
-          </h2>
+      <main className="mx-auto max-w-[1600px] px-6 py-8">
+        {/* Page Heading */}
+        <div className="mb-7">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="mb-1 text-xs font-bold uppercase tracking-widest text-blue-700">
+                Administration
+              </p>
 
-          <p className="mt-1 text-sm text-gray-500">
-            Manage the GSPL employee directory.
-          </p>
+              <h2 className="text-3xl font-bold tracking-tight text-slate-900">
+                Dashboard
+              </h2>
+
+              <p className="mt-1.5 text-sm text-slate-500">
+                Manage and monitor the GSPL employee directory.
+              </p>
+            </div>
+
+            <div className="hidden rounded-lg border border-slate-300 bg-white px-4 py-2.5 shadow-sm sm:block">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                Access Level
+              </p>
+              <p className="mt-0.5 text-sm font-bold text-blue-800">
+                SUPER ADMIN
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Error */}
         {error && (
-          <div className="mb-6 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
-            {error}
+          <div className="mb-6 flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3.5 shadow-sm">
+            <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-100 text-xs font-bold text-red-600">
+              !
+            </div>
+
+            <p className="text-sm font-semibold text-red-700">{error}</p>
           </div>
         )}
 
         {/* Statistics */}
         <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
           {/* Employees */}
-          <div className="rounded-xl border bg-white p-6 shadow-sm">
-            <p className="text-sm font-medium text-gray-500">
-              Total Employees
-            </p>
+          <div className="rounded-xl border border-slate-300 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                  Total Employees
+                </p>
 
-            <p className="mt-2 text-3xl font-bold text-gray-800">
-              {loading ? "..." : stats.totalEmployees}
-            </p>
+                <p className="mt-3 text-4xl font-bold tracking-tight text-slate-900">
+                  {loading ? "..." : stats.totalEmployees}
+                </p>
+
+                <p className="mt-2 text-xs font-medium text-slate-500">
+                  Employees currently listed
+                </p>
+              </div>
+
+              <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-50 text-blue-800">
+                <svg
+                  className="h-5 w-5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M15 19.128a9.38 9.38 0 003.75.872A9.75 9.75 0 0021 19.5M15 19.128v-1.5a3.75 3.75 0 00-3.75-3.75h-4.5A3.75 3.75 0 003 17.628v1.5m12-10.128a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
+                  />
+                </svg>
+              </div>
+            </div>
           </div>
 
           {/* Departments */}
-          <div className="rounded-xl border bg-white p-6 shadow-sm">
-            <p className="text-sm font-medium text-gray-500">
-              Departments
-            </p>
+          <div className="rounded-xl border border-slate-300 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                  Departments
+                </p>
 
-            <p className="mt-2 text-3xl font-bold text-gray-800">
-              {loading ? "..." : stats.totalDepartments}
-            </p>
+                <p className="mt-3 text-4xl font-bold tracking-tight text-slate-900">
+                  {loading ? "..." : stats.totalDepartments}
+                </p>
+
+                <p className="mt-2 text-xs font-medium text-slate-500">
+                  Departments represented
+                </p>
+              </div>
+
+              <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-50 text-blue-800">
+                <svg
+                  className="h-5 w-5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M3 21h18M5.25 21V8.25h13.5V21M8.25 8.25V5.25h7.5v3M9 12h1.5M13.5 12H15M9 15.75h1.5M13.5 15.75H15"
+                  />
+                </svg>
+              </div>
+            </div>
           </div>
 
           {/* Companies */}
-          <div className="rounded-xl border bg-white p-6 shadow-sm">
-            <p className="text-sm font-medium text-gray-500">
-              Companies
-            </p>
+          <div className="rounded-xl border border-slate-300 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                  Companies
+                </p>
 
-            <p className="mt-2 text-3xl font-bold text-gray-800">
-              {loading ? "..." : stats.totalCompanies}
-            </p>
+                <p className="mt-3 text-4xl font-bold tracking-tight text-slate-900">
+                  {loading ? "..." : stats.totalCompanies}
+                </p>
+
+                <p className="mt-2 text-xs font-medium text-slate-500">
+                  Companies in directory
+                </p>
+              </div>
+
+              <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-50 text-blue-800">
+                <svg
+                  className="h-5 w-5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M4.5 21V5.25A2.25 2.25 0 016.75 3h10.5a2.25 2.25 0 012.25 2.25V21M3 21h18M8.25 7.5h1.5M14.25 7.5h1.5M8.25 11.25h1.5M14.25 11.25h1.5M8.25 15h1.5M14.25 15h1.5"
+                  />
+                </svg>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Actions */}
-        <div className="mt-8 rounded-xl border bg-white p-6 shadow-sm">
-          <h3 className="text-lg font-semibold text-gray-800">
-            Quick Actions
-          </h3>
+        {/* Quick Actions */}
+        <div className="mt-8 overflow-hidden rounded-xl border border-slate-300 bg-white shadow-sm">
+          <div className="border-b border-slate-200 bg-slate-50 px-6 py-5">
+            <h3 className="text-lg font-bold text-slate-900">
+              Quick Actions
+            </h3>
 
-          <div className="mt-5 flex flex-wrap gap-3">
+            <p className="mt-1 text-sm text-slate-500">
+              Access commonly used employee directory management functions.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 p-6 md:grid-cols-3">
+            {/* View Directory */}
             <button
               type="button"
               onClick={() => navigate("/")}
-              className="rounded-md border border-gray-300 px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              className="group flex items-center justify-between rounded-xl border border-slate-300 bg-white p-5 text-left shadow-sm transition hover:border-blue-300 hover:bg-blue-50/40 hover:shadow-md"
             >
-              View Directory
+              <div className="flex items-center gap-4">
+                <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-slate-100 text-slate-700 transition group-hover:bg-blue-100 group-hover:text-blue-800">
+                  <svg
+                    className="h-5 w-5"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M2.25 12s3.5-6.75 9.75-6.75S21.75 12 21.75 12 18.25 18.75 12 18.75 2.25 12 2.25 12z"
+                    />
+                    <circle cx="12" cy="12" r="2.75" />
+                  </svg>
+                </div>
+
+                <div>
+                  <p className="text-sm font-bold text-slate-900">
+                    View Directory
+                  </p>
+
+                  <p className="mt-1 text-xs font-medium text-slate-500">
+                    Browse the public employee directory
+                  </p>
+                </div>
+              </div>
+
+              <span className="text-lg text-slate-400 transition group-hover:translate-x-1 group-hover:text-blue-700">
+                →
+              </span>
             </button>
 
+            {/* Manage Employees */}
             <button
               type="button"
               onClick={() => navigate("/admin/employees")}
-              className="rounded-md bg-blue-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-700"
+              className="group flex items-center justify-between rounded-xl border border-blue-200 bg-blue-50/60 p-5 text-left shadow-sm transition hover:border-blue-400 hover:bg-blue-50 hover:shadow-md"
             >
-              Manage Employees
+              <div className="flex items-center gap-4">
+                <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-800 text-white shadow-sm">
+                  <svg
+                    className="h-5 w-5"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M15 19.128a9.38 9.38 0 003.75.872A9.75 9.75 0 0021 19.5M15 19.128v-1.5a3.75 3.75 0 00-3.75-3.75h-4.5A3.75 3.75 0 003 17.628v1.5m12-10.128a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
+                    />
+                  </svg>
+                </div>
+
+                <div>
+                  <p className="text-sm font-bold text-slate-900">
+                    Manage Employees
+                  </p>
+
+                  <p className="mt-1 text-xs font-medium text-slate-500">
+                    Add, edit and manage employee records
+                  </p>
+                </div>
+              </div>
+
+              <span className="text-lg text-blue-500 transition group-hover:translate-x-1 group-hover:text-blue-800">
+                →
+              </span>
             </button>
 
+            {/* Import Excel */}
             <button
-  type="button"
-  onClick={() => navigate("/admin/import")}
-  className="rounded-md bg-gray-800 px-5 py-2.5 text-sm font-medium text-white hover:bg-gray-900"
->
-  Import Excel
-</button>
+              type="button"
+              onClick={() => navigate("/admin/import")}
+              className="group flex items-center justify-between rounded-xl border border-slate-300 bg-white p-5 text-left shadow-sm transition hover:border-slate-400 hover:bg-slate-50 hover:shadow-md"
+            >
+              <div className="flex items-center gap-4">
+                <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-slate-800 text-white shadow-sm">
+                  <svg
+                    className="h-5 w-5"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 16.5V3.75M12 3.75L7.5 8.25M12 3.75l4.5 4.5M4.5 14.25v3A2.25 2.25 0 006.75 19.5h10.5a2.25 2.25 0 002.25-2.25v-3"
+                    />
+                  </svg>
+                </div>
+
+                <div>
+                  <p className="text-sm font-bold text-slate-900">
+                    Import Excel
+                  </p>
+
+                  <p className="mt-1 text-xs font-medium text-slate-500">
+                    Upload and import employee data
+                  </p>
+                </div>
+              </div>
+
+              <span className="text-lg text-slate-400 transition group-hover:translate-x-1 group-hover:text-slate-700">
+                →
+              </span>
+            </button>
           </div>
+        </div>
+
+        {/* Footer */}
+        <div className="mt-8 border-t border-slate-300 pt-5 text-center">
+          <p className="text-xs font-medium text-slate-400">
+            Gujarat State Petronet Limited • Internal Administration Portal
+          </p>
         </div>
       </main>
     </div>
@@ -749,9 +1215,9 @@ function AdminImport() {
   const [previewLoading, setPreviewLoading] = useState(false);
   const [importLoading, setImportLoading] = useState(false);
   const [message, setMessage] = useState("");
-const [error, setError] = useState("");
-const [errorDetails, setErrorDetails] = useState([]);
-const [importResult, setImportResult] = useState(null);
+  const [error, setError] = useState("");
+  const [errorDetails, setErrorDetails] = useState([]);
+  const [importResult, setImportResult] = useState(null);
 
   const token = localStorage.getItem("gspl_admin_token");
 
@@ -774,255 +1240,491 @@ const [importResult, setImportResult] = useState(null);
   };
 
   const handlePreview = async () => {
-  if (!file) {
-    setError("Please select an Excel file first.");
-    return;
-  }
+    if (!file) {
+      setError("Please select an Excel file first.");
+      return;
+    }
 
-  setPreviewLoading(true);
-  setMessage("");
-  setError("");
-  setErrorDetails([]);
-  setImportResult(null);
+    setPreviewLoading(true);
+    setMessage("");
+    setError("");
+    setErrorDetails([]);
+    setImportResult(null);
 
-  try {
-    const formData = new FormData();
-    formData.append("file", file);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
 
-    const response = await api.post(
-      "/import/preview",
-      formData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+      const response = await api.post(
+        "/import/preview",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    setPreviewData(response.data.data || []);
-    setPreviewColumns(response.data.columns || []);
-    setMessage(
-      `Preview generated successfully. ${response.data.totalRows} row(s) found.`
-    );
-  } catch (error) {
-    const responseData = error.response?.data;
+      setPreviewData(response.data.data || []);
+      setPreviewColumns(response.data.columns || []);
 
-    setError(
-      responseData?.message ||
-        "Failed to generate Excel preview."
-    );
+      setMessage(
+        `Preview generated successfully. ${response.data.totalRows} row(s) found.`
+      );
+    } catch (error) {
+      const responseData = error.response?.data;
 
-    setErrorDetails(responseData?.invalidRows || []);
-  } finally {
-    setPreviewLoading(false);
-  }
-};
+      setError(
+        responseData?.message ||
+          "Failed to generate Excel preview."
+      );
+
+      setErrorDetails(responseData?.invalidRows || []);
+    } finally {
+      setPreviewLoading(false);
+    }
+  };
 
   const handleImport = async () => {
-  if (!file) {
-    setError("Please select an Excel file first.");
-    return;
-  }
+    if (!file) {
+      setError("Please select an Excel file first.");
+      return;
+    }
 
-  const confirmed = window.confirm(
-    "Are you sure you want to import this Excel file into the employee directory?"
-  );
-
-  if (!confirmed) {
-    return;
-  }
-
-  setImportLoading(true);
-  setMessage("");
-  setError("");
-  setErrorDetails([]);
-  setImportResult(null);
-
-  try {
-    const formData = new FormData();
-    formData.append("file", file);
-
-    const response = await api.post(
-      "/import/import",
-      formData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+    const confirmed = window.confirm(
+      "Are you sure you want to import this Excel file into the employee directory?"
     );
 
-    setImportResult(response.data);
+    if (!confirmed) {
+      return;
+    }
 
-    setMessage("Excel import completed successfully.");
+    setImportLoading(true);
+    setMessage("");
+    setError("");
+    setErrorDetails([]);
+    setImportResult(null);
 
-    setPreviewData([]);
-    setPreviewColumns([]);
-    setFile(null);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
 
-    document.getElementById("excel-file-input").value = "";
-  } catch (error) {
-    const responseData = error.response?.data;
+      const response = await api.post(
+        "/import/import",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    setError(
-      responseData?.message ||
-        "Failed to import Excel data."
-    );
+      setImportResult(response.data);
 
-    setErrorDetails(responseData?.invalidRows || []);
-  } finally {
-    setImportLoading(false);
-  }
-};
+      setMessage("Excel import completed successfully.");
+
+      setPreviewData([]);
+      setPreviewColumns([]);
+      setFile(null);
+
+      document.getElementById("excel-file-input").value = "";
+    } catch (error) {
+      const responseData = error.response?.data;
+
+      setError(
+        responseData?.message ||
+          "Failed to import Excel data."
+      );
+
+      setErrorDetails(responseData?.invalidRows || []);
+    } finally {
+      setImportLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-slate-100">
-      <header className="border-b bg-white shadow-sm">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-          <div>
-            <h1 className="text-xl font-bold text-slate-900">
-              Excel Import
-            </h1>
-            <p className="text-sm text-slate-500">
-              Import employee records into the GSPL directory
-            </p>
+      {/* ================= HEADER ================= */}
+      <header className="border-b border-slate-300 bg-white shadow-sm">
+        <div className="h-1.5 bg-blue-800"></div>
+
+        <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6 py-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-800 shadow-sm">
+              <span className="text-lg font-extrabold text-white">
+                G
+              </span>
+            </div>
+
+            <div>
+              <h1 className="text-xl font-bold tracking-tight text-slate-900">
+                GSPL Employee Directory
+              </h1>
+
+              <p className="mt-0.5 text-xs font-medium text-slate-500">
+                Excel Employee Import
+              </p>
+            </div>
           </div>
 
-          <div className="flex gap-2">
-            <button
-              onClick={() => navigate("/admin/dashboard")}
-              className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 shadow-sm transition hover:border-red-200 hover:bg-red-50 hover:text-red-700"
+          >
+            <svg
+              className="h-4 w-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
             >
-              Dashboard
-            </button>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6A2.25 2.25 0 005.25 5.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15"
+              />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M18 8.25L21.75 12 18 15.75M21.75 12H9"
+              />
+            </svg>
 
-            <button
-              onClick={handleLogout}
-              className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
-            >
-              Logout
-            </button>
-          </div>
+            Logout
+          </button>
         </div>
       </header>
 
-      <main className="mx-auto max-w-7xl px-6 py-8">
-        <div className="rounded-xl bg-white p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-slate-900">
-            Upload Employee Excel
+      {/* ================= MAIN ================= */}
+      <main className="mx-auto max-w-[1400px] px-5 py-6 sm:px-6">
+        {/* Top navigation */}
+        <div className="mb-4 flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={() => navigate("/admin/dashboard")}
+            className="inline-flex items-center gap-2 text-sm font-bold text-slate-600 transition hover:text-blue-800"
+          >
+            <span className="text-lg">←</span>
+            Dashboard
+          </button>
+
+          <span className="text-slate-300">/</span>
+
+          <button
+            type="button"
+            onClick={() => navigate("/admin/employees")}
+            className="text-sm font-bold text-slate-600 transition hover:text-blue-800"
+          >
+            Employees
+          </button>
+
+          <span className="text-slate-300">/</span>
+
+          <span className="text-sm font-semibold text-blue-800">
+            Import Excel
+          </span>
+        </div>
+
+        {/* Page heading */}
+        <div className="mb-5">
+          <div className="mb-2 h-1 w-16 rounded-full bg-blue-700"></div>
+
+          <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+            Import Employee Data
           </h2>
 
           <p className="mt-1 text-sm text-slate-500">
-            Required columns: Employee Name, Designation, Department,
-            Company, Extension, Mobile No
+            Upload an Excel file, review the data, and import employee
+            records into the directory.
           </p>
-
-          <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-end">
-            <div className="flex-1">
-              <label
-                htmlFor="excel-file-input"
-                className="mb-2 block text-sm font-medium text-slate-700"
-              >
-                Select Excel file
-              </label>
-
-              <input
-                id="excel-file-input"
-                type="file"
-                accept=".xlsx,.xls"
-                onChange={handleFileChange}
-                className="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm"
-              />
-            </div>
-
-            <button
-              onClick={handlePreview}
-              disabled={!file || previewLoading}
-              className="rounded-lg bg-slate-800 px-5 py-2.5 text-sm font-medium text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {previewLoading ? "Previewing..." : "Preview Excel"}
-            </button>
-          </div>
-
-          {file && (
-            <div className="mt-4 rounded-lg bg-slate-50 p-4 text-sm text-slate-700">
-              <span className="font-medium">Selected file:</span>{" "}
-              {file.name}
-            </div>
-          )}
-
-          {message && (
-            <div className="mt-4 rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-700">
-              {message}
-            </div>
-          )}
-
-          {error && (
-  <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-    <p className="font-semibold">{error}</p>
-
-    {errorDetails?.length > 0 && (
-      <div className="mt-3 space-y-2">
-        {errorDetails.map((item, index) => (
-          <div
-            key={index}
-            className="rounded-md border border-red-200 bg-white p-3"
-          >
-            <p className="font-medium text-red-800">
-              Excel Row {item.row} — {item.employeeName}
-            </p>
-
-            {item.missingFields?.length > 0 && (
-              <p className="mt-1 text-sm text-red-700">
-                Missing: {item.missingFields.join(", ")}
-              </p>
-            )}
-
-            {item.invalidFields?.length > 0 && (
-              <ul className="mt-1 list-disc pl-5 text-sm text-red-700">
-                {item.invalidFields.map((field, fieldIndex) => (
-                  <li key={fieldIndex}>{field}</li>
-                ))}
-              </ul>
-            )}
-          </div>
-        ))}
-      </div>
-    )}
-  </div>
-)}
         </div>
 
-        {previewData.length > 0 && (
-          <div className="mt-6 rounded-xl bg-white p-6 shadow-sm">
-            <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-              <div>
-                <h2 className="text-lg font-semibold text-slate-900">
-                  Excel Preview
-                </h2>
+        {/* ================= UPLOAD CARD ================= */}
+        <section className="overflow-hidden rounded-xl border border-slate-300 bg-white shadow-sm">
+          <div className="border-b border-slate-200 bg-slate-50 px-5 py-4 sm:px-6">
+            <div className="flex items-center gap-3">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-100 text-blue-800">
+                <svg
+                  className="h-5 w-5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 16V4m0 0L8 8m4-4 4 4"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M5 14v4a2 2 0 002 2h10a2 2 0 002-2v-4"
+                  />
+                </svg>
+              </div>
 
-                <p className="text-sm text-slate-500">
+              <div>
+                <h3 className="text-sm font-bold text-slate-800">
+                  Upload Excel File
+                </h3>
+
+                <p className="text-xs text-slate-500">
+                  Select an .xlsx or .xls employee data file
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-5 sm:p-6">
+            {/* Required columns */}
+            <div className="mb-5 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3">
+              <p className="text-xs font-bold uppercase tracking-wide text-blue-800">
+                Required Excel Columns
+              </p>
+
+              <p className="mt-1 text-sm font-medium text-blue-700">
+                Employee Name, Designation, Department, Company,
+                Extension, Mobile No
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-end">
+              {/* File input */}
+              <div className="flex-1">
+                <label
+                  htmlFor="excel-file-input"
+                  className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-slate-600"
+                >
+                  Select Excel File
+                </label>
+
+                <input
+                  id="excel-file-input"
+                  type="file"
+                  accept=".xlsx,.xls"
+                  onChange={handleFileChange}
+                  className="block w-full cursor-pointer rounded-lg border border-slate-300 bg-white text-sm text-slate-700 file:mr-4 file:border-0 file:border-r file:border-slate-300 file:bg-slate-50 file:px-4 file:py-2.5 file:text-sm file:font-bold file:text-slate-700 hover:file:bg-slate-100"
+                />
+              </div>
+
+              {/* Preview button */}
+              <button
+                type="button"
+                onClick={handlePreview}
+                disabled={!file || previewLoading}
+                className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-blue-800 px-5 text-sm font-bold text-white shadow-sm transition hover:bg-blue-900 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {previewLoading ? (
+                  <>
+                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-blue-300 border-t-white"></span>
+                    Generating Preview...
+                  </>
+                ) : (
+                  <>
+                    <svg
+                      className="h-4 w-4"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M2.25 12s3.75-6.75 9.75-6.75S21.75 12 21.75 12 18 18.75 12 18.75 2.25 12 2.25 12z"
+                      />
+                      <circle cx="12" cy="12" r="2.5" />
+                    </svg>
+
+                    Preview Excel
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* Selected file */}
+            {file && (
+              <div className="mt-4 flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-700">
+                  <svg
+                    className="h-5 w-5"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M14 2v6h6M8 13h8M8 17h6"
+                    />
+                  </svg>
+                </div>
+
+                <div className="min-w-0">
+                  <p className="text-xs font-bold uppercase tracking-wide text-slate-500">
+                    Selected File
+                  </p>
+
+                  <p className="truncate text-sm font-semibold text-slate-800">
+                    {file.name}
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* ================= MESSAGES ================= */}
+        {message && (
+          <div className="mt-4 flex items-start gap-3 rounded-lg border border-green-200 bg-green-50 px-4 py-3">
+            <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-green-100 text-xs font-bold text-green-700">
+              ✓
+            </div>
+
+            <p className="text-sm font-semibold text-green-700">
+              {message}
+            </p>
+          </div>
+        )}
+
+        {error && (
+          <div className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-4">
+            <div className="flex items-start gap-3">
+              <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-100 text-xs font-bold text-red-700">
+                !
+              </div>
+
+              <div>
+                <p className="text-sm font-semibold text-red-700">
+                  {error}
+                </p>
+              </div>
+            </div>
+
+            {errorDetails?.length > 0 && (
+              <div className="mt-3 space-y-2 border-t border-red-200 pt-3">
+                <p className="text-xs font-bold uppercase tracking-wide text-red-700">
+                  Validation Details
+                </p>
+
+                {errorDetails.map((item, index) => (
+                  <div
+                    key={index}
+                    className="rounded-lg border border-red-200 bg-white p-3"
+                  >
+                    <p className="text-sm font-bold text-red-800">
+                      Excel Row {item.row}
+                      {item.employeeName
+                        ? ` — ${item.employeeName}`
+                        : ""}
+                    </p>
+
+                    {item.missingFields?.length > 0 && (
+                      <p className="mt-1 text-sm text-red-700">
+                        Missing:{" "}
+                        {item.missingFields.join(", ")}
+                      </p>
+                    )}
+
+                    {item.invalidFields?.length > 0 && (
+                      <ul className="mt-1 list-disc pl-5 text-sm text-red-700">
+                        {item.invalidFields.map(
+                          (field, fieldIndex) => (
+                            <li key={fieldIndex}>
+                              {field}
+                            </li>
+                          )
+                        )}
+                      </ul>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ================= PREVIEW ================= */}
+        {previewData.length > 0 && (
+          <section className="mt-5 overflow-hidden rounded-xl border border-slate-300 bg-white shadow-sm">
+            <div className="flex flex-col gap-4 border-b border-slate-200 bg-slate-50 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+              <div>
+                <div className="flex items-center gap-2">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100 text-blue-800">
+                    <svg
+                      className="h-4 w-4"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M3 5h18M3 12h18M3 19h18"
+                      />
+                    </svg>
+                  </div>
+
+                  <h3 className="text-sm font-bold text-slate-800">
+                    Excel Preview
+                  </h3>
+                </div>
+
+                <p className="mt-1 text-xs text-slate-500">
                   Review the imported rows before confirming.
                 </p>
               </div>
 
               <button
+                type="button"
                 onClick={handleImport}
                 disabled={importLoading}
-                className="rounded-lg bg-green-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-green-700 px-5 text-sm font-bold text-white shadow-sm transition hover:bg-green-800 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {importLoading ? "Importing..." : "Confirm Import"}
+                {importLoading ? (
+                  <>
+                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-green-300 border-t-white"></span>
+                    Importing...
+                  </>
+                ) : (
+                  <>
+                    <svg
+                      className="h-4 w-4"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M5 12.5 9.5 17 19 7"
+                      />
+                    </svg>
+
+                    Confirm Import
+                  </>
+                )}
               </button>
             </div>
 
-            <div className="mt-5 overflow-x-auto rounded-lg border">
+            <div className="overflow-x-auto">
               <table className="min-w-full text-left text-sm">
-                <thead className="bg-slate-50">
+                <thead className="bg-slate-700 text-white">
                   <tr>
                     {previewColumns.map((column) => (
                       <th
                         key={column}
-                        className="whitespace-nowrap border-b px-4 py-3 font-semibold text-slate-700"
+                        className="whitespace-nowrap border-r border-slate-600 px-4 py-3 text-xs font-bold uppercase tracking-wide last:border-r-0"
                       >
                         {column}
                       </th>
@@ -1030,16 +1732,20 @@ const [importResult, setImportResult] = useState(null);
                   </tr>
                 </thead>
 
-                <tbody>
+                <tbody className="divide-y divide-slate-200">
                   {previewData.map((row, index) => (
                     <tr
                       key={index}
-                      className="border-b last:border-b-0"
+                      className={
+                        index % 2 === 0
+                          ? "bg-white"
+                          : "bg-slate-50"
+                      }
                     >
                       {previewColumns.map((column) => (
                         <td
                           key={column}
-                          className="whitespace-nowrap px-4 py-3 text-slate-600"
+                          className="whitespace-nowrap border-r border-slate-200 px-4 py-3 text-slate-700 last:border-r-0"
                         >
                           {row[column]}
                         </td>
@@ -1050,56 +1756,100 @@ const [importResult, setImportResult] = useState(null);
               </table>
             </div>
 
-            <p className="mt-3 text-xs text-slate-500">
-              Showing the first 10 rows for preview.
-            </p>
-          </div>
+            <div className="border-t border-slate-200 bg-slate-50 px-5 py-3">
+              <p className="text-xs font-medium text-slate-500">
+                Showing the first 10 rows for preview.
+              </p>
+            </div>
+          </section>
         )}
 
+        {/* ================= IMPORT RESULT ================= */}
         {importResult && (
-          <div className="mt-6 rounded-xl bg-white p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-slate-900">
-              Import Result
-            </h2>
+          <section className="mt-5 overflow-hidden rounded-xl border border-slate-300 bg-white shadow-sm">
+            <div className="border-b border-slate-200 bg-slate-50 px-5 py-4 sm:px-6">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-green-100 text-green-700">
+                  ✓
+                </div>
 
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
-              <div className="rounded-lg bg-green-50 p-4">
-                <p className="text-sm text-green-700">
-                  Imported
-                </p>
-                <p className="mt-1 text-2xl font-bold text-green-800">
-                  {importResult.importedCount}
-                </p>
-              </div>
+                <div>
+                  <h3 className="text-sm font-bold text-slate-800">
+                    Import Result
+                  </h3>
 
-              <div className="rounded-lg bg-yellow-50 p-4">
-                <p className="text-sm text-yellow-700">
-                  Duplicates Skipped
-                </p>
-                <p className="mt-1 text-2xl font-bold text-yellow-800">
-                  {importResult.duplicateCount}
-                </p>
+                  <p className="text-xs text-slate-500">
+                    Summary of the completed Excel import.
+                  </p>
+                </div>
               </div>
             </div>
 
-            {importResult.duplicates?.length > 0 && (
-              <div className="mt-5">
-                <h3 className="font-medium text-slate-800">
-                  Duplicate Records
-                </h3>
+            <div className="p-5 sm:p-6">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="rounded-xl border border-green-200 bg-green-50 p-4">
+                  <p className="text-xs font-bold uppercase tracking-wide text-green-700">
+                    Imported
+                  </p>
 
-                <ul className="mt-2 list-disc pl-5 text-sm text-slate-600">
-                  {importResult.duplicates.map((duplicate, index) => (
-                    <li key={index}>
-                      {duplicate.employeeName} —{" "}
-                      {duplicate.company}
-                    </li>
-                  ))}
-                </ul>
+                  <p className="mt-1 text-3xl font-extrabold text-green-800">
+                    {importResult.importedCount}
+                  </p>
+                </div>
+
+                <div className="rounded-xl border border-yellow-200 bg-yellow-50 p-4">
+                  <p className="text-xs font-bold uppercase tracking-wide text-yellow-700">
+                    Duplicates Skipped
+                  </p>
+
+                  <p className="mt-1 text-3xl font-extrabold text-yellow-800">
+                    {importResult.duplicateCount}
+                  </p>
+                </div>
               </div>
-            )}
-          </div>
+
+              {importResult.duplicates?.length > 0 && (
+                <div className="mt-5">
+                  <h4 className="text-sm font-bold text-slate-800">
+                    Duplicate Records
+                  </h4>
+
+                  <div className="mt-2 overflow-hidden rounded-lg border border-slate-200">
+                    <ul className="divide-y divide-slate-200">
+                      {importResult.duplicates.map(
+                        (duplicate, index) => (
+                          <li
+                            key={index}
+                            className="px-4 py-3 text-sm text-slate-700"
+                          >
+                            <span className="font-semibold">
+                              {duplicate.employeeName}
+                            </span>
+
+                            <span className="mx-2 text-slate-300">
+                              •
+                            </span>
+
+                            <span className="text-slate-500">
+                              {duplicate.company}
+                            </span>
+                          </li>
+                        )
+                      )}
+                    </ul>
+                  </div>
+                </div>
+              )}
+            </div>
+          </section>
         )}
+
+        {/* Footer */}
+        <div className="mt-6 border-t border-slate-300 pt-4 text-center">
+          <p className="text-[11px] font-medium text-slate-400">
+            Gujarat State Petronet Limited • Internal Administration Portal
+          </p>
+        </div>
       </main>
     </div>
   );
@@ -1141,6 +1891,8 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route path="/admin/employees/add" element={<AddEmployee />} />
 
         <Route
           path="/admin/employees/edit/:id"

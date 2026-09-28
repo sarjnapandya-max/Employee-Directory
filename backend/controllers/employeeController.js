@@ -240,9 +240,77 @@ const deleteEmployee = async (req, res) => {
   }
 };
 
+// POST /api/employees
+const createEmployee = async (req, res) => {
+  try {
+    const {
+      employeeName,
+      designation,
+      department,
+      company,
+      extension,
+      mobileNo,
+    } = req.body;
+
+    // Validate required fields
+    const requiredFields = {
+      employeeName,
+      designation,
+      department,
+      company,
+      extension,
+      mobileNo,
+    };
+
+    const missingFields = Object.entries(requiredFields)
+      .filter(([key, value]) => !value || String(value).trim() === "")
+      .map(([key]) => key);
+
+    if (missingFields.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: "All employee fields are required.",
+        missingFields,
+      });
+    }
+
+    // Validate mobile number
+    if (!/^\d{10}$/.test(String(mobileNo).trim())) {
+      return res.status(400).json({
+        success: false,
+        message: "Mobile number must contain exactly 10 digits.",
+      });
+    }
+
+    // Create employee
+    const employee = await Employee.create({
+      employeeName: String(employeeName).trim(),
+      designation: String(designation).trim(),
+      department: String(department).trim(),
+      company: String(company).trim(),
+      extension: String(extension).trim(),
+      mobileNo: String(mobileNo).trim(),
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "Employee added successfully",
+      data: employee,
+    });
+  } catch (error) {
+    console.error("Create employee error:", error.message);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to add employee",
+    });
+  }
+};
+
 module.exports = {
   getEmployees,
   getEmployeeById,
+  createEmployee,
   updateEmployee,
   deleteEmployee,
 };
