@@ -119,7 +119,7 @@ function AddEmployee() {
           </h2>
 
           <p className="mt-1.5 text-sm text-slate-500">
-            Enter the employee details below to add a new record to the GSPL
+            Enter the employee details below to add a new record to the GTL
             employee directory.
           </p>
         </div>
