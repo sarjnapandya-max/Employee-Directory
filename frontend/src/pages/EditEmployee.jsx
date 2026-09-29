@@ -192,11 +192,16 @@ function EditEmployee() {
 
           <div className="mx-auto flex max-w-[1600px] items-center px-6 py-4">
             <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-800 shadow-sm">
-                <span className="text-lg font-extrabold text-white">
-                  G
-                </span>
-              </div>
+              <button
+  type="button"
+  onClick={() => navigate("/admin/dashboard")}
+  aria-label="Go to Admin Dashboard"
+  className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg bg-blue-800 shadow-sm transition hover:bg-blue-900"
+>
+  <span className="text-lg font-extrabold text-white">
+    G
+  </span>
+</button>
 
               <div>
                 <h1 className="text-xl font-bold tracking-tight text-slate-900">
@@ -232,11 +237,16 @@ function EditEmployee() {
 
         <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-800 shadow-sm">
-              <span className="text-lg font-extrabold text-white">
-                G
-              </span>
-            </div>
+            <button
+  type="button"
+  onClick={() => navigate("/admin/dashboard")}
+  aria-label="Go to Admin Dashboard"
+  className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg bg-blue-800 shadow-sm transition hover:bg-blue-900"
+>
+  <span className="text-lg font-extrabold text-white">
+    G
+  </span>
+</button>
 
             <div>
               <h1 className="text-xl font-bold tracking-tight text-slate-900">

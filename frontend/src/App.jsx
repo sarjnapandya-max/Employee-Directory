@@ -91,12 +91,16 @@ function PublicDirectory() {
 
         <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-800 shadow-sm">
-              <span className="text-lg font-extrabold text-white">
-                G
-              </span>
-            </div>
-
+            <button
+  type="button"
+  onClick={() => {
+  window.location.href = "/admin/dashboard";
+}}
+  aria-label="Go to Admin Dashboard"
+  className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg bg-blue-800 shadow-sm transition hover:bg-blue-900"
+>
+  <span className="text-lg font-extrabold text-white">G</span>
+</button>
             <div>
               <h1 className="text-xl font-bold tracking-tight text-slate-900">
                 GTL Employee Directory
@@ -108,19 +112,24 @@ function PublicDirectory() {
             </div>
           </div>
 
-          <div className="hidden items-center gap-3 sm:flex">
-            <div className="h-8 w-px bg-slate-200"></div>
+          <div className="flex items-center gap-2">
+  <button
+    type="button"
+    className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-bold text-blue-800"
+  >
+    Normal User
+  </button>
 
-            <div className="text-right">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
-                Internal Portal
-              </p>
-
-              <p className="mt-0.5 text-xs font-semibold text-blue-800">
-                Employee Contact Directory
-              </p>
-            </div>
-          </div>
+  <button
+    type="button"
+    onClick={() => {
+      window.location.href = "/admin/login";
+    }}
+    className="rounded-lg bg-blue-800 px-4 py-2 text-sm font-bold text-white shadow-sm transition hover:bg-blue-900"
+  >
+    Admin
+  </button>
+</div>
         </div>
       </header>
 
@@ -805,7 +814,12 @@ function AdminDashboard() {
     totalEmployees: 0,
     totalDepartments: 0,
     totalCompanies: 0,
+    employees: [],
+    departments: [],
+    companies: [],
   });
+
+  const [selectedSection, setSelectedSection] = useState(null);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -829,7 +843,16 @@ function AdminDashboard() {
           }
         );
 
-        setStats(response.data?.data || {});
+        setStats(
+          response.data?.data || {
+            totalEmployees: 0,
+            totalDepartments: 0,
+            totalCompanies: 0,
+            employees: [],
+            departments: [],
+            companies: [],
+          }
+        );
       } catch (error) {
         console.error("Failed to fetch admin stats:", error);
 
@@ -856,6 +879,12 @@ function AdminDashboard() {
     navigate("/admin/login");
   };
 
+  const handleSectionClick = (section) => {
+    setSelectedSection((currentSection) =>
+      currentSection === section ? null : section
+    );
+  };
+
   const adminUser = JSON.parse(
     localStorage.getItem("gspl_admin_user") || "{}"
   );
@@ -868,10 +897,22 @@ function AdminDashboard() {
 
         <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6 py-5">
           <div className="flex items-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-800 shadow-sm">
-              <span className="text-xl font-extrabold text-white">G</span>
-            </div>
+            <button
+  type="button"
+  onClick={() => {
+    const adminToken = localStorage.getItem("gspl_admin_token");
 
+    if (adminToken) {
+      navigate("/admin/dashboard");
+    } else {
+      navigate("/");
+    }
+  }}
+  aria-label="Go to Dashboard"
+  className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg bg-blue-800 shadow-sm transition hover:bg-blue-900"
+>
+  <span className="text-lg font-extrabold text-white">G</span>
+</button>
             <div>
               <h1 className="text-2xl font-bold tracking-tight text-slate-900">
                 GTL Employee Directory
@@ -921,6 +962,7 @@ function AdminDashboard() {
                   d="M18 8.25L21.75 12 18 15.75M21.75 12H9"
                 />
               </svg>
+
               Logout
             </button>
           </div>
@@ -950,6 +992,7 @@ function AdminDashboard() {
               <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
                 Access Level
               </p>
+
               <p className="mt-0.5 text-sm font-bold text-blue-800">
                 SUPER ADMIN
               </p>
@@ -970,8 +1013,16 @@ function AdminDashboard() {
 
         {/* Statistics */}
         <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-          {/* Employees */}
-          <div className="rounded-xl border border-slate-300 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+          {/* Total Employees */}
+          <button
+            type="button"
+            onClick={() => handleSectionClick("employees")}
+            className={`rounded-xl border p-6 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${
+              selectedSection === "employees"
+                ? "border-blue-500 bg-blue-50 ring-2 ring-blue-100"
+                : "border-slate-300 bg-white hover:border-blue-300"
+            }`}
+          >
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
@@ -983,7 +1034,9 @@ function AdminDashboard() {
                 </p>
 
                 <p className="mt-2 text-xs font-medium text-slate-500">
-                  Employees currently listed
+                  {selectedSection === "employees"
+                    ? "Click to hide employee data"
+                    : "Click to view employee data"}
                 </p>
               </div>
 
@@ -1003,10 +1056,18 @@ function AdminDashboard() {
                 </svg>
               </div>
             </div>
-          </div>
+          </button>
 
           {/* Departments */}
-          <div className="rounded-xl border border-slate-300 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+          <button
+            type="button"
+            onClick={() => handleSectionClick("departments")}
+            className={`rounded-xl border p-6 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${
+              selectedSection === "departments"
+                ? "border-blue-500 bg-blue-50 ring-2 ring-blue-100"
+                : "border-slate-300 bg-white hover:border-blue-300"
+            }`}
+          >
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
@@ -1018,7 +1079,9 @@ function AdminDashboard() {
                 </p>
 
                 <p className="mt-2 text-xs font-medium text-slate-500">
-                  Departments represented
+                  {selectedSection === "departments"
+                    ? "Click to hide department data"
+                    : "Click to view department data"}
                 </p>
               </div>
 
@@ -1038,10 +1101,18 @@ function AdminDashboard() {
                 </svg>
               </div>
             </div>
-          </div>
+          </button>
 
           {/* Companies */}
-          <div className="rounded-xl border border-slate-300 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+          <button
+            type="button"
+            onClick={() => handleSectionClick("companies")}
+            className={`rounded-xl border p-6 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${
+              selectedSection === "companies"
+                ? "border-blue-500 bg-blue-50 ring-2 ring-blue-100"
+                : "border-slate-300 bg-white hover:border-blue-300"
+            }`}
+          >
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
@@ -1053,7 +1124,9 @@ function AdminDashboard() {
                 </p>
 
                 <p className="mt-2 text-xs font-medium text-slate-500">
-                  Companies in directory
+                  {selectedSection === "companies"
+                    ? "Click to hide company data"
+                    : "Click to view company data"}
                 </p>
               </div>
 
@@ -1073,8 +1146,241 @@ function AdminDashboard() {
                 </svg>
               </div>
             </div>
-          </div>
+          </button>
         </div>
+
+        {/* Employee Data */}
+        {selectedSection === "employees" && (
+          <div className="mt-6 overflow-hidden rounded-xl border border-slate-300 bg-white shadow-sm">
+            <div className="border-b border-slate-200 bg-slate-50 px-6 py-5">
+              <h3 className="text-lg font-bold text-slate-900">
+                Employee Directory
+              </h3>
+
+              <p className="mt-1 text-sm text-slate-500">
+                All employees currently available in the directory.
+              </p>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-slate-200">
+                <thead className="bg-slate-100">
+                  <tr>
+                    <th className="px-5 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-600">
+                      Sr. No.
+                    </th>
+
+                    <th className="px-5 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-600">
+                      Employee Name
+                    </th>
+
+                    <th className="px-5 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-600">
+                      Designation
+                    </th>
+
+                    <th className="px-5 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-600">
+                      Department
+                    </th>
+
+                    <th className="px-5 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-600">
+                      Company
+                    </th>
+
+                    <th className="px-5 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-600">
+                      Extension
+                    </th>
+
+                    <th className="px-5 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-600">
+                      Mobile No.
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody className="divide-y divide-slate-200 bg-white">
+                  {stats.employees?.length > 0 ? (
+                    stats.employees.map((employee, index) => (
+                      <tr
+                        key={employee._id || index}
+                        className="hover:bg-slate-50"
+                      >
+                        <td className="whitespace-nowrap px-5 py-3 text-sm font-semibold text-slate-500">
+                          {index + 1}
+                        </td>
+
+                        <td className="whitespace-nowrap px-5 py-3 text-sm font-semibold text-slate-900">
+                          {employee.employeeName || "-"}
+                        </td>
+
+                        <td className="px-5 py-3 text-sm text-slate-700">
+                          {employee.designation || "-"}
+                        </td>
+
+                        <td className="px-5 py-3 text-sm text-slate-700">
+                          {employee.department || "-"}
+                        </td>
+
+                        <td className="px-5 py-3 text-sm text-slate-700">
+                          {employee.company || "-"}
+                        </td>
+
+                        <td className="whitespace-nowrap px-5 py-3 text-sm text-slate-700">
+                          {employee.extension || "-"}
+                        </td>
+
+                        <td className="whitespace-nowrap px-5 py-3 text-sm text-slate-700">
+                          {employee.mobileNo || "-"}
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td
+                        colSpan="7"
+                        className="px-5 py-10 text-center text-sm font-medium text-slate-500"
+                      >
+                        No employee data available.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* Department Data */}
+        {selectedSection === "departments" && (
+          <div className="mt-6 overflow-hidden rounded-xl border border-slate-300 bg-white shadow-sm">
+            <div className="border-b border-slate-200 bg-slate-50 px-6 py-5">
+              <h3 className="text-lg font-bold text-slate-900">
+                Departments
+              </h3>
+
+              <p className="mt-1 text-sm text-slate-500">
+                Departments represented in the employee directory.
+              </p>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-slate-200">
+                <thead className="bg-slate-100">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-600">
+                      Sr. No.
+                    </th>
+
+                    <th className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-600">
+                      Department
+                    </th>
+
+                    <th className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-600">
+                      Employees
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody className="divide-y divide-slate-200 bg-white">
+                  {stats.departments?.length > 0 ? (
+                    stats.departments.map((department, index) => (
+                      <tr
+                        key={`${department.name}-${index}`}
+                        className="hover:bg-slate-50"
+                      >
+                        <td className="px-6 py-3 text-sm font-semibold text-slate-500">
+                          {index + 1}
+                        </td>
+
+                        <td className="px-6 py-3 text-sm font-semibold text-slate-900">
+                          {department.name || "-"}
+                        </td>
+
+                        <td className="px-6 py-3 text-sm font-semibold text-blue-800">
+                          {department.employeeCount ?? 0}
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td
+                        colSpan="3"
+                        className="px-6 py-10 text-center text-sm font-medium text-slate-500"
+                      >
+                        No department data available.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* Company Data */}
+        {selectedSection === "companies" && (
+          <div className="mt-6 overflow-hidden rounded-xl border border-slate-300 bg-white shadow-sm">
+            <div className="border-b border-slate-200 bg-slate-50 px-6 py-5">
+              <h3 className="text-lg font-bold text-slate-900">
+                Companies
+              </h3>
+
+              <p className="mt-1 text-sm text-slate-500">
+                Companies represented in the employee directory.
+              </p>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-slate-200">
+                <thead className="bg-slate-100">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-600">
+                      Sr. No.
+                    </th>
+
+                    <th className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-600">
+                      Company
+                    </th>
+
+                    <th className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-600">
+                      Employees
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody className="divide-y divide-slate-200 bg-white">
+                  {stats.companies?.length > 0 ? (
+                    stats.companies.map((company, index) => (
+                      <tr
+                        key={`${company.name}-${index}`}
+                        className="hover:bg-slate-50"
+                      >
+                        <td className="px-6 py-3 text-sm font-semibold text-slate-500">
+                          {index + 1}
+                        </td>
+
+                        <td className="px-6 py-3 text-sm font-semibold text-slate-900">
+                          {company.name || "-"}
+                        </td>
+
+                        <td className="px-6 py-3 text-sm font-semibold text-blue-800">
+                          {company.employeeCount ?? 0}
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td
+                        colSpan="3"
+                        className="px-6 py-10 text-center text-sm font-medium text-slate-500"
+                      >
+                        No company data available.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
 
         {/* Quick Actions */}
         <div className="mt-8 overflow-hidden rounded-xl border border-slate-300 bg-white shadow-sm">
@@ -1220,6 +1526,7 @@ function AdminDashboard() {
   );
 }
 
+
 function AdminImport() {
   const navigate = useNavigate();
 
@@ -1364,11 +1671,22 @@ function AdminImport() {
 
         <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-800 shadow-sm">
-              <span className="text-lg font-extrabold text-white">
-                G
-              </span>
-            </div>
+          <button
+  type="button"
+  onClick={() => {
+    const adminToken = localStorage.getItem("gspl_admin_token");
+
+    if (adminToken) {
+      navigate("/admin/dashboard");
+    } else {
+      navigate("/");
+    }
+  }}
+  aria-label="Go to Dashboard"
+  className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg bg-blue-800 shadow-sm transition hover:bg-blue-900"
+>
+  <span className="text-lg font-extrabold text-white">G</span>
+</button>
 
             <div>
               <h1 className="text-xl font-bold tracking-tight text-slate-900">
