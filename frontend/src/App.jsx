@@ -629,12 +629,12 @@ function AdminLogin() {
             {/* Card Header */}
             <div className="border-b border-slate-200 bg-slate-50 px-7 py-5">
               <h2 className="text-xl font-bold text-slate-900">
-                Super Admin Login
-              </h2>
+  Admin Login
+</h2>
 
-              <p className="mt-1 text-sm text-slate-500">
-                Sign in to manage the employee directory.
-              </p>
+<p className="mt-1 text-sm text-slate-500">
+  Sign in using your existing GSPL credentials.
+</p>
             </div>
 
             {/* Form */}
@@ -755,17 +755,7 @@ function AdminLogin() {
                   )}
                 </button>
 
-                {/* Change Password */}
-                <div className="pt-1 text-center">
-                  <button
-                    type="button"
-                    onClick={() => navigate("/admin/change-password")}
-                    className="inline-flex items-center gap-2 text-sm font-semibold text-blue-700 transition hover:text-blue-900 hover:underline"
-                  >
-                    <span>🔒</span>
-                    Change Password
-                  </button>
-                </div>
+                
 
               </form>
 
