@@ -240,6 +240,56 @@ const deleteEmployee = async (req, res) => {
   }
 };
 
+// DELETE /api/employees/bulk-delete
+const deleteMultipleEmployees = async (req, res) => {
+  try {
+    const { ids } = req.body;
+
+    // Validate request
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Please provide at least one employee ID.",
+      });
+    }
+
+    // Validate every employee ID
+    const invalidIds = ids.filter(
+      (id) => !mongoose.Types.ObjectId.isValid(id)
+    );
+
+    if (invalidIds.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: "One or more employee IDs are invalid.",
+      });
+    }
+
+    // Delete selected employees
+    const result = await Employee.deleteMany({
+      _id: { $in: ids },
+    });
+
+    res.status(200).json({
+      success: true,
+      message: `${result.deletedCount} employee${
+        result.deletedCount === 1 ? "" : "s"
+      } deleted permanently.`,
+      deletedCount: result.deletedCount,
+    });
+  } catch (error) {
+    console.error(
+      "Delete multiple employees error:",
+      error.message
+    );
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to delete selected employees.",
+    });
+  }
+};
+
 // POST /api/employees
 const createEmployee = async (req, res) => {
   try {
@@ -313,4 +363,5 @@ module.exports = {
   createEmployee,
   updateEmployee,
   deleteEmployee,
+  deleteMultipleEmployees,
 };

@@ -1,11 +1,11 @@
 const express = require("express");
-
 const {
   getEmployees,
   getEmployeeById,
   createEmployee,
   updateEmployee,
   deleteEmployee,
+  deleteMultipleEmployees,
 } = require("../controllers/employeeController");
 
 const { protect } = require("../middleware/authMiddleware");
@@ -22,6 +22,13 @@ router.get("/:id", getEmployeeById);
 router.post("/", protect, superAdminOnly, createEmployee);
 
 router.put("/:id", protect, superAdminOnly, updateEmployee);
+
+router.delete(
+  "/bulk-delete",
+  protect,
+  superAdminOnly,
+  deleteMultipleEmployees
+);
 
 router.delete("/:id", protect, superAdminOnly, deleteEmployee);
 

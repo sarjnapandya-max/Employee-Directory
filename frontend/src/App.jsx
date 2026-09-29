@@ -11,7 +11,7 @@ import {
 import AdminEmployees from "./pages/AdminEmployees";
 import EditEmployee from "./pages/EditEmployee";
 import AddEmployee from "./pages/AddEmployee";
-
+import ChangePassword from "./pages/ChangePassword";
 // function PublicDirectory() {
 //   return (
 function PublicDirectory() {
@@ -745,6 +745,18 @@ function AdminLogin() {
                     "Sign In"
                   )}
                 </button>
+
+                {/* Change Password */}
+                <div className="pt-1 text-center">
+                  <button
+                    type="button"
+                    onClick={() => navigate("/admin/change-password")}
+                    className="inline-flex items-center gap-2 text-sm font-semibold text-blue-700 transition hover:text-blue-900 hover:underline"
+                  >
+                    <span>🔒</span>
+                    Change Password
+                  </button>
+                </div>
 
               </form>
 
@@ -1902,8 +1914,15 @@ function App() {
             <ProtectedRoute>
               <EditEmployee />
             </ProtectedRoute>
-          }
-        />
+          } />
+
+          <Route
+  path="/admin/change-password"
+  element={<ChangePassword />}
+/>
+
+          
+
       </Routes>
     </BrowserRouter>
   );

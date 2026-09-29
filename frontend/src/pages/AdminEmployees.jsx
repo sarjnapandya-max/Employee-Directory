@@ -16,6 +16,8 @@ function AdminEmployees() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalEmployees, setTotalEmployees] = useState(0);
+  const [selectedEmployees, setSelectedEmployees] = useState([]);
+  const [deletingSelected, setDeletingSelected] = useState(false);
 
   const itemsPerPage = 10;
 
@@ -81,6 +83,108 @@ function AdminEmployees() {
 
     setCurrentPage(1);
   };
+
+  const handleSelectEmployee = (employeeId) => {
+  setSelectedEmployees((previousSelected) =>
+    previousSelected.includes(employeeId)
+      ? previousSelected.filter((id) => id !== employeeId)
+      : [...previousSelected, employeeId]
+  );
+};
+
+const handleSelectAll = () => {
+  const currentPageIds = employees.map((employee) => employee._id);
+
+  const allCurrentPageSelected = currentPageIds.every((id) =>
+    selectedEmployees.includes(id)
+  );
+
+  if (allCurrentPageSelected) {
+    setSelectedEmployees((previousSelected) =>
+      previousSelected.filter((id) => !currentPageIds.includes(id))
+    );
+  } else {
+    setSelectedEmployees((previousSelected) => [
+      ...new Set([...previousSelected, ...currentPageIds]),
+    ]);
+  }
+};
+
+const handleDeleteSelected = async () => {
+  const confirmed = window.confirm(
+    `Are you sure you want to permanently delete ${selectedEmployees.length} selected employee${
+      selectedEmployees.length > 1 ? "s" : ""
+    }? This action cannot be undone.`
+  );
+
+  if (!confirmed) {
+    return;
+  }
+
+  try {
+    setDeletingSelected(true);
+    setError("");
+
+    const token = localStorage.getItem("gspl_admin_token");
+
+    if (!token) {
+      navigate("/admin/login");
+      return;
+    }
+
+    const response = await axios.delete(
+      `${import.meta.env.VITE_API_URL}/employees/bulk-delete`,
+      {
+        data: {
+          ids: selectedEmployees,
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    alert(
+      response.data?.message ||
+        "Selected employees deleted successfully."
+    );
+
+    setSelectedEmployees([]);
+
+    if (
+      employees.length > 0 &&
+      selectedEmployees.length === employees.length &&
+      currentPage > 1
+    ) {
+      setCurrentPage((page) => page - 1);
+    } else {
+      fetchEmployees();
+    }
+  } catch (error) {
+    console.error("Failed to delete selected employees:", error);
+
+    if (error.response?.status === 401) {
+      localStorage.removeItem("gspl_admin_token");
+      localStorage.removeItem("gspl_admin_user");
+      navigate("/admin/login");
+      return;
+    }
+
+    alert(
+      error.response?.data?.message ||
+        "Failed to delete selected employees."
+    );
+  } finally {
+    setDeletingSelected(false);
+  }
+};
+
+
+const isAllCurrentPageSelected =
+  employees.length > 0 &&
+  employees.every((employee) =>
+    selectedEmployees.includes(employee._id)
+  );
 
   const getSortArrow = (field) => {
     if (sortBy !== field) {
@@ -177,6 +281,19 @@ function AdminEmployees() {
                 Total Employees
               </span>
             </div>
+
+            {selectedEmployees.length > 0 && (
+  <button
+    type="button"
+    onClick={handleDeleteSelected}
+    disabled={deletingSelected}
+    className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+  >
+    {deletingSelected
+      ? "Deleting..."
+      : `🗑 Delete Selected (${selectedEmployees.length})`}
+  </button>
+)}
 
             {/* Add Employee */}
             <button
@@ -281,10 +398,19 @@ function AdminEmployees() {
               <table className="min-w-full text-sm">
                 <thead className="sticky top-0 z-10 bg-slate-700 text-white shadow-sm">
                   <tr>
-                    <th className="border-r border-slate-600 px-3 py-3 text-left text-[11px] font-bold uppercase tracking-wide">
-                      Sr. No.
-                    </th>
+                    <th className="border-r border-slate-600 px-3 py-3 text-center text-[11px] font-bold uppercase tracking-wide">
+  <input
+    type="checkbox"
+    checked={isAllCurrentPageSelected}
+    onChange={handleSelectAll}
+    className="h-4 w-4 cursor-pointer accent-blue-700"
+    title="Select all employees on this page"
+  />
+</th>
 
+<th className="border-r border-slate-600 px-3 py-3 text-left text-[11px] font-bold uppercase tracking-wide">
+  Sr. No.
+</th>
                     <th
                       onClick={() => handleSort("employeeName")}
                       className={`cursor-pointer whitespace-nowrap border-r border-slate-600 px-3 py-3 text-left text-[11px] font-bold uppercase tracking-wide transition ${
@@ -349,9 +475,18 @@ function AdminEmployees() {
                       key={employee._id}
                       className="transition hover:bg-blue-50/50"
                     >
-                      <td className="border-r border-slate-200 px-3 py-2.5 text-xs font-medium text-slate-500">
-                        {(currentPage - 1) * itemsPerPage + index + 1}
-                      </td>
+                      <td className="border-r border-slate-200 px-3 py-2.5 text-center">
+  <input
+    type="checkbox"
+    checked={selectedEmployees.includes(employee._id)}
+    onChange={() => handleSelectEmployee(employee._id)}
+    className="h-4 w-4 cursor-pointer accent-blue-700"
+  />
+</td>
+
+<td className="border-r border-slate-200 px-3 py-2.5 text-xs font-medium text-slate-500">
+  {(currentPage - 1) * itemsPerPage + index + 1}
+</td>
 
                       <td className="whitespace-nowrap border-r border-slate-200 px-3 py-2.5">
                         <span className="font-bold text-slate-900">
