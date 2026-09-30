@@ -5,14 +5,23 @@ import axios from "axios";
 function ChangePassword() {
   const navigate = useNavigate();
 
-  const [username, setUsername] = useState("");
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [currentPassword, setCurrentPassword] =
+    useState("");
 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [newPassword, setNewPassword] =
+    useState("");
+
+  const [confirmPassword, setConfirmPassword] =
+    useState("");
+
+  const [loading, setLoading] =
+    useState(false);
+
+  const [error, setError] =
+    useState("");
+
+  const [success, setSuccess] =
+    useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -21,44 +30,81 @@ function ChangePassword() {
     setSuccess("");
 
     if (
-      !username ||
       !currentPassword ||
       !newPassword ||
       !confirmPassword
     ) {
-      setError("Please fill in all fields.");
+      setError(
+        "Please fill in all password fields."
+      );
       return;
     }
 
-    if (newPassword !== confirmPassword) {
-      setError("New password and confirm password do not match.");
+    if (
+      newPassword !== confirmPassword
+    ) {
+      setError(
+        "New password and confirm password do not match."
+      );
+      return;
+    }
+
+    const token =
+      localStorage.getItem(
+        "gspl_admin_token"
+      );
+
+    if (!token) {
+      navigate("/admin/login");
       return;
     }
 
     try {
       setLoading(true);
 
-      const response = await axios.put(
-        `${import.meta.env.VITE_API_URL}/auth/change-password`,
-        {
-          username,
-          currentPassword,
-          newPassword,
-          confirmPassword,
-        }
-      );
+      const response =
+        await axios.put(
+          `${import.meta.env.VITE_API_URL}/auth/change-password`,
+          {
+            currentPassword,
+            newPassword,
+            confirmPassword,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
       setSuccess(
         response.data?.message ||
           "Password changed successfully."
       );
 
-      setUsername("");
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
     } catch (error) {
-      console.error("Change password error:", error);
+      console.error(
+        "Change password error:",
+        error
+      );
+
+      if (
+        error.response?.status === 401
+      ) {
+        localStorage.removeItem(
+          "gspl_admin_token"
+        );
+
+        localStorage.removeItem(
+          "gspl_admin_user"
+        );
+
+        navigate("/admin/login");
+        return;
+      }
 
       setError(
         error.response?.data?.message ||
@@ -88,10 +134,12 @@ function ChangePassword() {
 
           <button
             type="button"
-            onClick={() => navigate("/admin/login")}
+            onClick={() =>
+              navigate("/admin/dashboard")
+            }
             className="rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 shadow-sm transition hover:bg-slate-50"
           >
-            ← Back to Login
+            ← Back to Dashboard
           </button>
         </div>
       </header>
@@ -125,13 +173,16 @@ function ChangePassword() {
                 </h3>
 
                 <p className="mt-1 text-sm text-slate-500">
-                  Enter your username, current password, and choose a new password.
+                  Enter your current password and choose a new password.
                 </p>
               </div>
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5 p-6">
+          <form
+            onSubmit={handleSubmit}
+            className="space-y-5 p-6"
+          >
             {error && (
               <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3">
                 <p className="text-sm font-semibold text-red-700">
@@ -148,24 +199,6 @@ function ChangePassword() {
               </div>
             )}
 
-            {/* Username */}
-            <div>
-              <label className="mb-2 block text-sm font-bold text-slate-700">
-                Username
-              </label>
-
-              <input
-                type="text"
-                value={username}
-                onChange={(event) =>
-                  setUsername(event.target.value)
-                }
-                placeholder="Enter your username"
-                autoComplete="username"
-                className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
-              />
-            </div>
-
             {/* Current Password */}
             <div>
               <label className="mb-2 block text-sm font-bold text-slate-700">
@@ -176,7 +209,9 @@ function ChangePassword() {
                 type="password"
                 value={currentPassword}
                 onChange={(event) =>
-                  setCurrentPassword(event.target.value)
+                  setCurrentPassword(
+                    event.target.value
+                  )
                 }
                 placeholder="Enter current password"
                 autoComplete="current-password"
@@ -194,7 +229,9 @@ function ChangePassword() {
                 type="password"
                 value={newPassword}
                 onChange={(event) =>
-                  setNewPassword(event.target.value)
+                  setNewPassword(
+                    event.target.value
+                  )
                 }
                 placeholder="Enter new password"
                 autoComplete="new-password"
@@ -212,7 +249,9 @@ function ChangePassword() {
                 type="password"
                 value={confirmPassword}
                 onChange={(event) =>
-                  setConfirmPassword(event.target.value)
+                  setConfirmPassword(
+                    event.target.value
+                  )
                 }
                 placeholder="Confirm new password"
                 autoComplete="new-password"
@@ -223,7 +262,9 @@ function ChangePassword() {
             <div className="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:justify-end">
               <button
                 type="button"
-                onClick={() => navigate("/admin/login")}
+                onClick={() =>
+                  navigate("/admin/dashboard")
+                }
                 className="rounded-lg border border-slate-300 bg-white px-5 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-50"
               >
                 Cancel

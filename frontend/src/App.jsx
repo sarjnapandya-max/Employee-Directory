@@ -2214,8 +2214,14 @@ function App() {
           }
         />
 
-        <Route path="/admin/employees/add" element={<AddEmployee />} />
-
+        <Route
+  path="/admin/employees/add"
+  element={
+    <ProtectedRoute>
+      <AddEmployee />
+    </ProtectedRoute>
+  }
+/>
         <Route
           path="/admin/employees/edit/:id"
           element={
@@ -2226,7 +2232,11 @@ function App() {
 
           <Route
   path="/admin/change-password"
-  element={<ChangePassword />}
+  element={
+    <ProtectedRoute>
+      <ChangePassword />
+    </ProtectedRoute>
+  }
 />
 
           
