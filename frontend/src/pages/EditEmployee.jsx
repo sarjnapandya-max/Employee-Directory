@@ -13,6 +13,7 @@ function EditEmployee() {
     company: "",
     extension: "",
     mobileNo: "",
+    email: "",
   });
 
   const [loading, setLoading] = useState(true);
@@ -49,6 +50,7 @@ function EditEmployee() {
           company: employee.company || "",
           extension: employee.extension || "",
           mobileNo: employee.mobileNo || "",
+          email: employee.email || "",
         });
       } catch (error) {
         console.error("Failed to fetch employee:", error);
@@ -62,7 +64,7 @@ function EditEmployee() {
 
         setError(
           error.response?.data?.message ||
-            "Unable to load employee details."
+          "Unable to load employee details."
         );
       } finally {
         setLoading(false);
@@ -139,7 +141,7 @@ function EditEmployee() {
 
       setError(
         error.response?.data?.message ||
-          "Unable to update employee details."
+        "Unable to update employee details."
       );
     } finally {
       setSaving(false);
@@ -177,7 +179,7 @@ function EditEmployee() {
 
       alert(
         error.response?.data?.message ||
-          "Failed to delete employee."
+        "Failed to delete employee."
       );
     } finally {
       setDeleting(false);
@@ -193,15 +195,15 @@ function EditEmployee() {
           <div className="mx-auto flex max-w-[1600px] items-center px-6 py-4">
             <div className="flex items-center gap-3">
               <button
-  type="button"
-  onClick={() => navigate("/admin/dashboard")}
-  aria-label="Go to Admin Dashboard"
-  className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg bg-blue-800 shadow-sm transition hover:bg-blue-900"
->
-  <span className="text-lg font-extrabold text-white">
-    G
-  </span>
-</button>
+                type="button"
+                onClick={() => navigate("/admin/dashboard")}
+                aria-label="Go to Admin Dashboard"
+                className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg bg-blue-800 shadow-sm transition hover:bg-blue-900"
+              >
+                <span className="text-lg font-extrabold text-white">
+                  G
+                </span>
+              </button>
 
               <div>
                 <h1 className="text-xl font-bold tracking-tight text-slate-900">
@@ -238,15 +240,15 @@ function EditEmployee() {
         <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
             <button
-  type="button"
-  onClick={() => navigate("/admin/dashboard")}
-  aria-label="Go to Admin Dashboard"
-  className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg bg-blue-800 shadow-sm transition hover:bg-blue-900"
->
-  <span className="text-lg font-extrabold text-white">
-    G
-  </span>
-</button>
+              type="button"
+              onClick={() => navigate("/admin/dashboard")}
+              aria-label="Go to Admin Dashboard"
+              className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg bg-blue-800 shadow-sm transition hover:bg-blue-900"
+            >
+              <span className="text-lg font-extrabold text-white">
+                G
+              </span>
+            </button>
 
             <div>
               <h1 className="text-xl font-bold tracking-tight text-slate-900">
@@ -466,29 +468,48 @@ function EditEmployee() {
                   />
                 </div>
 
-                {/* Mobile No */}
-                <div>
-                  <label className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-slate-600">
-                    Mobile No.
-                  </label>
+               {/* Mobile No */}
+<div>
+  <label className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-slate-600">
+    Mobile No.
+  </label>
 
-                  <input
-                    type="text"
-                    name="mobileNo"
-                    value={formData.mobileNo}
-                    onChange={(e) => {
-                      const value = e.target.value;
+  <input
+    type="text"
+    name="mobileNo"
+    value={formData.mobileNo}
+    onChange={(e) => {
+      const value = e.target.value;
 
-                      if (/^\d{0,10}$/.test(value)) {
-                        handleChange(e);
-                      }
-                    }}
-                    maxLength={10}
-                    inputMode="numeric"
-                    className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm font-medium text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
-                    placeholder="Enter 10-digit mobile number"
-                  />
-                </div>
+      if (/^\d{0,10}$/.test(value)) {
+        handleChange(e);
+      }
+    }}
+    maxLength={10}
+    inputMode="numeric"
+    className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm font-medium text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+    placeholder="Enter 10-digit mobile number"
+  />
+</div>
+
+{/* Email */}
+<div>
+  <label className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-slate-600">
+    Email{" "}
+    <span className="font-medium normal-case text-slate-400">
+      (Optional)
+    </span>
+  </label>
+
+  <input
+    type="email"
+    name="email"
+    value={formData.email}
+    onChange={handleChange}
+    className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm font-medium text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+    placeholder="Enter email address"
+  />
+</div>
               </div>
 
               {/* Actions */}

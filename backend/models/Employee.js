@@ -37,6 +37,12 @@ const employeeSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    email: {
+      type: String,
+      required: false,
+      trim: true,
+      lowercase: true,
+    },
   },
   {
     timestamps: true,

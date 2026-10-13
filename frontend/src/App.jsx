@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
- import axios from "axios";
+import { useEffect, useRef, useState } from "react";
+import axios from "axios";
 import api from "./api";
 import {
   BrowserRouter,
@@ -92,15 +92,15 @@ function PublicDirectory() {
         <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
             <button
-  type="button"
-  onClick={() => {
-  window.location.href = "/admin/dashboard";
-}}
-  aria-label="Go to Admin Dashboard"
-  className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg bg-blue-800 shadow-sm transition hover:bg-blue-900"
->
-  <span className="text-lg font-extrabold text-white">G</span>
-</button>
+              type="button"
+              onClick={() => {
+                window.location.href = "/admin/dashboard";
+              }}
+              aria-label="Go to Admin Dashboard"
+              className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg bg-blue-800 shadow-sm transition hover:bg-blue-900"
+            >
+              <span className="text-lg font-extrabold text-white">G</span>
+            </button>
             <div>
               <h1 className="text-xl font-bold tracking-tight text-slate-900">
                 GTL Employee Directory
@@ -113,23 +113,23 @@ function PublicDirectory() {
           </div>
 
           <div className="flex items-center gap-2">
-  <button
-    type="button"
-    className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-bold text-blue-800"
-  >
-    Normal User
-  </button>
+            <button
+              type="button"
+              className="rounded-lg border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-bold text-blue-800"
+            >
+              Normal User
+            </button>
 
-  <button
-    type="button"
-    onClick={() => {
-      window.location.href = "/admin/login";
-    }}
-    className="rounded-lg bg-blue-800 px-4 py-2 text-sm font-bold text-white shadow-sm transition hover:bg-blue-900"
-  >
-    Admin
-  </button>
-</div>
+            <button
+              type="button"
+              onClick={() => {
+                window.location.href = "/admin/login";
+              }}
+              className="rounded-lg bg-blue-800 px-4 py-2 text-sm font-bold text-white shadow-sm transition hover:bg-blue-900"
+            >
+              Admin
+            </button>
+          </div>
         </div>
       </header>
 
@@ -205,6 +205,7 @@ function PublicDirectory() {
                   viewBox="0 0 24 24"
                   stroke="currentColor"
                   strokeWidth="2"
+
                 >
                   <path
                     strokeLinecap="round"
@@ -222,7 +223,7 @@ function PublicDirectory() {
                   setSearchTerm(e.target.value);
                   setCurrentPage(1);
                 }}
-                placeholder="Search by name, designation, department, company, extension or mobile..."
+                placeholder="Search by name, designation, department, company, extension, mobile or email..."
                 className="w-full rounded-lg border border-slate-300 bg-white py-2.5 pl-11 pr-24 text-sm text-slate-700 outline-none transition placeholder:text-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
               />
 
@@ -248,7 +249,7 @@ function PublicDirectory() {
 
             {/* Table */}
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[1050px] text-left text-sm">
+              <table className="w-full min-w-[1200px] text-left text-sm">
                 <thead className="sticky top-0 z-10 bg-slate-700 text-white shadow-sm">
                   <tr>
                     <th className="border-r border-slate-600 px-4 py-3 text-xs font-bold uppercase tracking-wide whitespace-nowrap">
@@ -256,11 +257,10 @@ function PublicDirectory() {
                     </th>
 
                     <th
-                      className={`border-r border-slate-600 px-4 py-3 text-xs font-bold uppercase tracking-wide whitespace-nowrap ${
-                        sortBy === "employeeName"
-                          ? "bg-blue-800"
-                          : ""
-                      }`}
+                      className={`border-r border-slate-600 px-4 py-3 text-xs font-bold uppercase tracking-wide whitespace-nowrap ${sortBy === "employeeName"
+                        ? "bg-blue-800"
+                        : ""
+                        }`}
                     >
                       <button
                         type="button"
@@ -278,11 +278,10 @@ function PublicDirectory() {
                     </th>
 
                     <th
-                      className={`border-r border-slate-600 px-4 py-3 text-xs font-bold uppercase tracking-wide whitespace-nowrap ${
-                        sortBy === "designation"
-                          ? "bg-blue-800"
-                          : ""
-                      }`}
+                      className={`border-r border-slate-600 px-4 py-3 text-xs font-bold uppercase tracking-wide whitespace-nowrap ${sortBy === "designation"
+                        ? "bg-blue-800"
+                        : ""
+                        }`}
                     >
                       <button
                         type="button"
@@ -300,11 +299,10 @@ function PublicDirectory() {
                     </th>
 
                     <th
-                      className={`border-r border-slate-600 px-4 py-3 text-xs font-bold uppercase tracking-wide whitespace-nowrap ${
-                        sortBy === "department"
-                          ? "bg-blue-800"
-                          : ""
-                      }`}
+                      className={`border-r border-slate-600 px-4 py-3 text-xs font-bold uppercase tracking-wide whitespace-nowrap ${sortBy === "department"
+                        ? "bg-blue-800"
+                        : ""
+                        }`}
                     >
                       <button
                         type="button"
@@ -322,11 +320,10 @@ function PublicDirectory() {
                     </th>
 
                     <th
-                      className={`border-r border-slate-600 px-4 py-3 text-xs font-bold uppercase tracking-wide whitespace-nowrap ${
-                        sortBy === "company"
-                          ? "bg-blue-800"
-                          : ""
-                      }`}
+                      className={`border-r border-slate-600 px-4 py-3 text-xs font-bold uppercase tracking-wide whitespace-nowrap ${sortBy === "company"
+                        ? "bg-blue-800"
+                        : ""
+                        }`}
                     >
                       <button
                         type="button"
@@ -347,8 +344,12 @@ function PublicDirectory() {
                       Extension
                     </th>
 
-                    <th className="px-4 py-3 text-xs font-bold uppercase tracking-wide whitespace-nowrap">
+                    <th className="border-r border-slate-600 px-4 py-3 text-xs font-bold uppercase tracking-wide whitespace-nowrap">
                       Mobile No.
+                    </th>
+
+                    <th className="px-4 py-3 text-xs font-bold uppercase tracking-wide whitespace-nowrap">
+                      Email
                     </th>
                   </tr>
                 </thead>
@@ -357,7 +358,8 @@ function PublicDirectory() {
                   {loading ? (
                     <tr>
                       <td
-                        colSpan="7"
+                        colSpan="8"
+
                         className="px-5 py-14 text-center text-slate-500"
                       >
                         <div className="flex flex-col items-center justify-center gap-3">
@@ -372,7 +374,7 @@ function PublicDirectory() {
                   ) : error ? (
                     <tr>
                       <td
-                        colSpan="7"
+                        colSpan="8"
                         className="px-5 py-14 text-center"
                       >
                         <p className="text-sm font-semibold text-red-600">
@@ -383,7 +385,7 @@ function PublicDirectory() {
                   ) : employees.length === 0 ? (
                     <tr>
                       <td
-                        colSpan="7"
+                        colSpan="8"
                         className="px-5 py-14 text-center text-slate-500"
                       >
                         <p className="text-sm font-semibold">
@@ -397,79 +399,87 @@ function PublicDirectory() {
                     </tr>
                   ) : (
                     employees.map((employee, index) => {
-  const search = searchTerm.trim().toLowerCase();
+                      const search = searchTerm.trim().toLowerCase();
 
-  const isMatch =
-    search &&
-    (
-      employee.employeeName
-        ?.toLowerCase()
-        .includes(search) ||
-      employee.designation
-        ?.toLowerCase()
-        .includes(search) ||
-      employee.department
-        ?.toLowerCase()
-        .includes(search) ||
-      employee.company
-        ?.toLowerCase()
-        .includes(search) ||
-      employee.extension
-        ?.toLowerCase()
-        .includes(search) ||
-      employee.mobileNo
-        ?.toLowerCase()
-        .includes(search)
-    );
+                      const isMatch =
+                        search &&
+                        (
+                          employee.employeeName
+                            ?.toLowerCase()
+                            .includes(search) ||
+                          employee.designation
+                            ?.toLowerCase()
+                            .includes(search) ||
+                          employee.department
+                            ?.toLowerCase()
+                            .includes(search) ||
+                          employee.company
+                            ?.toLowerCase()
+                            .includes(search) ||
+                          employee.extension
+                            ?.toLowerCase()
+                            .includes(search) ||
+                          employee.mobileNo
+                            ?.toLowerCase()
+                            .includes(search) ||
+                          employee.email
+                            ?.toLowerCase()
+                            .includes(search)
+                        );
 
-  return (
-    <tr
-      key={employee._id}
-      className={`border-b border-slate-200 transition-colors ${
-        isMatch
-          ? "!bg-blue-100 border-l-4 border-l-blue-600 font-semibold"
-          : index % 2 === 0
-            ? "bg-white hover:bg-blue-50"
-            : "bg-slate-50 hover:bg-blue-50"
-      }`}
-    >
-      <td className="border-r border-slate-200 px-4 py-3 text-slate-600 font-medium whitespace-nowrap">
-        {(currentPage - 1) * itemsPerPage + index + 1}
-      </td>
+                      return (
+                        <tr
+                          key={employee._id}
+                          className={`border-b border-slate-200 transition-colors ${isMatch
+                            ? "!bg-blue-100 border-l-4 border-l-blue-600 font-semibold"
+                            : index % 2 === 0
+                              ? "bg-white hover:bg-blue-50"
+                              : "bg-slate-50 hover:bg-blue-50"
+                            }`}
+                        >
+                          <td className="border-r border-slate-200 px-4 py-3 text-slate-600 font-medium whitespace-nowrap">
+                            {(currentPage - 1) * itemsPerPage + index + 1}
+                          </td>
 
-      <td className="border-r border-slate-200 px-4 py-3 whitespace-nowrap">
-        <span className="font-bold text-slate-900">
-          {employee.employeeName}
-        </span>
-      </td>
+                          <td className="border-r border-slate-200 px-4 py-3 whitespace-nowrap">
+                            <span className="font-bold text-slate-900">
+                              {employee.employeeName}
+                            </span>
+                          </td>
 
-      <td className="border-r border-slate-200 px-4 py-3 text-slate-700">
-        {employee.designation}
-      </td>
+                          <td className="border-r border-slate-200 px-4 py-3 text-slate-700">
+                            {employee.designation}
+                          </td>
 
-      <td className="border-r border-slate-200 px-4 py-3 text-slate-700">
-        {employee.department}
-      </td>
+                          <td className="border-r border-slate-200 px-4 py-3 text-slate-700">
+                            {employee.department}
+                          </td>
 
-      <td className="border-r border-slate-200 px-4 py-3 text-slate-700">
-        {employee.company}
-      </td>
+                          <td className="border-r border-slate-200 px-4 py-3 text-slate-700">
+                            {employee.company}
+                          </td>
 
-      <td className="border-r border-slate-200 px-4 py-3 whitespace-nowrap">
-        <span className="inline-flex min-w-[58px] items-center justify-center rounded-md border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-bold text-blue-800">
-          {employee.extension}
-        </span>
-      </td>
+                          <td className="border-r border-slate-200 px-4 py-3 whitespace-nowrap">
+                            <span className="inline-flex min-w-[58px] items-center justify-center rounded-md border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-bold text-blue-800">
+                              {employee.extension}
+                            </span>
+                          </td>
 
-      <td className="px-4 py-3 whitespace-nowrap">
-        <span className="font-medium text-slate-700">
-          {employee.mobileNo}
-        </span>
-      </td>
-    </tr>
-  );
-})
-                      
+                          <td className="border-r border-slate-200 px-4 py-3 whitespace-nowrap">
+                            <span className="font-medium text-slate-700">
+                              {employee.mobileNo}
+                            </span>
+                          </td>
+
+                          <td className="px-4 py-3 whitespace-nowrap">
+                            <span className="font-medium text-slate-700">
+                              {employee.email || "-"}
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    })
+
                   )}
                 </tbody>
               </table>
@@ -587,7 +597,7 @@ function AdminLogin() {
 
       setError(
         error.response?.data?.message ||
-          "Login failed. Please check your credentials."
+        "Login failed. Please check your credentials."
       );
     } finally {
       setLoading(false);
@@ -629,12 +639,12 @@ function AdminLogin() {
             {/* Card Header */}
             <div className="border-b border-slate-200 bg-slate-50 px-7 py-5">
               <h2 className="text-xl font-bold text-slate-900">
-  Admin Login
-</h2>
+                Admin Login
+              </h2>
 
-<p className="mt-1 text-sm text-slate-500">
-  Sign in using your existing GSPL credentials.
-</p>
+              <p className="mt-1 text-sm text-slate-500">
+                Sign in using your existing GSPL credentials.
+              </p>
             </div>
 
             {/* Form */}
@@ -755,7 +765,7 @@ function AdminLogin() {
                   )}
                 </button>
 
-                
+
 
               </form>
 
@@ -888,21 +898,21 @@ function AdminDashboard() {
         <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6 py-5">
           <div className="flex items-center gap-4">
             <button
-  type="button"
-  onClick={() => {
-    const adminToken = localStorage.getItem("gspl_admin_token");
+              type="button"
+              onClick={() => {
+                const adminToken = localStorage.getItem("gspl_admin_token");
 
-    if (adminToken) {
-      navigate("/admin/dashboard");
-    } else {
-      navigate("/");
-    }
-  }}
-  aria-label="Go to Dashboard"
-  className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg bg-blue-800 shadow-sm transition hover:bg-blue-900"
->
-  <span className="text-lg font-extrabold text-white">G</span>
-</button>
+                if (adminToken) {
+                  navigate("/admin/dashboard");
+                } else {
+                  navigate("/");
+                }
+              }}
+              aria-label="Go to Dashboard"
+              className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg bg-blue-800 shadow-sm transition hover:bg-blue-900"
+            >
+              <span className="text-lg font-extrabold text-white">G</span>
+            </button>
             <div>
               <h1 className="text-2xl font-bold tracking-tight text-slate-900">
                 GTL Employee Directory
@@ -1007,11 +1017,10 @@ function AdminDashboard() {
           <button
             type="button"
             onClick={() => handleSectionClick("employees")}
-            className={`rounded-xl border p-6 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${
-              selectedSection === "employees"
-                ? "border-blue-500 bg-blue-50 ring-2 ring-blue-100"
-                : "border-slate-300 bg-white hover:border-blue-300"
-            }`}
+            className={`rounded-xl border p-6 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${selectedSection === "employees"
+              ? "border-blue-500 bg-blue-50 ring-2 ring-blue-100"
+              : "border-slate-300 bg-white hover:border-blue-300"
+              }`}
           >
             <div className="flex items-start justify-between">
               <div>
@@ -1052,11 +1061,10 @@ function AdminDashboard() {
           <button
             type="button"
             onClick={() => handleSectionClick("departments")}
-            className={`rounded-xl border p-6 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${
-              selectedSection === "departments"
-                ? "border-blue-500 bg-blue-50 ring-2 ring-blue-100"
-                : "border-slate-300 bg-white hover:border-blue-300"
-            }`}
+            className={`rounded-xl border p-6 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${selectedSection === "departments"
+              ? "border-blue-500 bg-blue-50 ring-2 ring-blue-100"
+              : "border-slate-300 bg-white hover:border-blue-300"
+              }`}
           >
             <div className="flex items-start justify-between">
               <div>
@@ -1097,11 +1105,10 @@ function AdminDashboard() {
           <button
             type="button"
             onClick={() => handleSectionClick("companies")}
-            className={`rounded-xl border p-6 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${
-              selectedSection === "companies"
-                ? "border-blue-500 bg-blue-50 ring-2 ring-blue-100"
-                : "border-slate-300 bg-white hover:border-blue-300"
-            }`}
+            className={`rounded-xl border p-6 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${selectedSection === "companies"
+              ? "border-blue-500 bg-blue-50 ring-2 ring-blue-100"
+              : "border-slate-300 bg-white hover:border-blue-300"
+              }`}
           >
             <div className="flex items-start justify-between">
               <div>
@@ -1225,7 +1232,7 @@ function AdminDashboard() {
                   ) : (
                     <tr>
                       <td
-                        colSpan="7"
+                        colSpan="8"
                         className="px-5 py-10 text-center text-sm font-medium text-slate-500"
                       >
                         No employee data available.
@@ -1519,6 +1526,7 @@ function AdminDashboard() {
 
 function AdminImport() {
   const navigate = useNavigate();
+  const editingInputRef = useRef(null);
 
   const [file, setFile] = useState(null);
   const [previewData, setPreviewData] = useState([]);
@@ -1529,6 +1537,14 @@ function AdminImport() {
   const [error, setError] = useState("");
   const [errorDetails, setErrorDetails] = useState([]);
   const [importResult, setImportResult] = useState(null);
+  const [duplicates, setDuplicates] = useState([]);
+  const [editingRowIndex, setEditingRowIndex] = useState(null);
+  const [editingRowData, setEditingRowData] = useState({});
+  const [revalidating, setRevalidating] = useState(false);
+
+  // Intentional duplicate import
+  const [selectedDuplicateRows, setSelectedDuplicateRows] = useState([]);
+  const [duplicateImportLoading, setDuplicateImportLoading] = useState(false);
 
   const token = localStorage.getItem("gspl_admin_token");
 
@@ -1539,15 +1555,21 @@ function AdminImport() {
   };
 
   const handleFileChange = (event) => {
-    const selectedFile = event.target.files?.[0];
+    const selectedFile = event.target.files?.[0] || null;
 
-    setFile(selectedFile || null);
+    setFile(selectedFile);
     setPreviewData([]);
     setPreviewColumns([]);
     setImportResult(null);
     setMessage("");
     setError("");
     setErrorDetails([]);
+
+    // Reset duplicate/editing state
+    setDuplicates([]);
+    setEditingRowIndex(null);
+    setEditingRowData({});
+    setRevalidating(false);
   };
 
   const handlePreview = async () => {
@@ -1562,9 +1584,21 @@ function AdminImport() {
     setErrorDetails([]);
     setImportResult(null);
 
+    setDuplicates([]);
+    setEditingRowIndex(null);
+    setEditingRowData({});
+    setRevalidating(false);
+
     try {
       const formData = new FormData();
       formData.append("file", file);
+
+      const token = localStorage.getItem("gspl_admin_token");
+
+      if (!token) {
+        navigate("/admin/login");
+        return;
+      }
 
       const response = await api.post(
         "/import/preview",
@@ -1572,38 +1606,220 @@ function AdminImport() {
         {
           headers: {
             Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
           },
         }
       );
 
-      setPreviewData(response.data.data || []);
-      setPreviewColumns(response.data.columns || []);
 
-      setMessage(
-        `Preview generated successfully. ${response.data.totalRows} row(s) found.`
-      );
-    } catch (error) {
-      const responseData = error.response?.data;
+      const responseData = response.data || {};
+
+      setPreviewData(responseData.data || []);
+      setPreviewColumns(responseData.columns || []);
+      setDuplicates(responseData.duplicates || []);
+      setErrorDetails(responseData.invalidRows || []);
+      setEditingRowIndex(null);
+      setEditingRowData({});
+
+      if ((responseData.duplicates || []).length > 0) {
+        setMessage(
+          "Preview loaded, but duplicate records were found. Please correct them before importing."
+        );
+      } else if ((responseData.invalidRows || []).length > 0) {
+        setMessage(
+          "Preview loaded, but some rows contain validation errors. Please correct them before importing."
+        );
+      } else {
+        setMessage(
+          responseData.message || "Excel file preview generated successfully."
+        );
+      }
+    } catch (err) {
+      const responseData = err.response?.data || {};
+
+      // Keep preview data even when backend returns 400
+      // because duplicate/validation errors should still be visible.
+      setPreviewData(responseData.data || []);
+      setPreviewColumns(responseData.columns || []);
+      setDuplicates(responseData.duplicates || []);
+      setErrorDetails(responseData.invalidRows || []);
+      setEditingRowIndex(null);
+      setEditingRowData({});
 
       setError(
-        responseData?.message ||
-          "Failed to generate Excel preview."
+        responseData.message ||
+        err.message ||
+        "Failed to preview Excel file."
       );
 
-      setErrorDetails(responseData?.invalidRows || []);
+      setMessage("");
     } finally {
       setPreviewLoading(false);
     }
   };
 
+  const handleStartEdit = (rowIndex) => {
+    if (rowIndex < 0 || rowIndex >= previewData.length) {
+      return;
+    }
+
+    setEditingRowIndex(rowIndex);
+    setEditingRowData({ ...previewData[rowIndex] });
+
+    setMessage("");
+    setError("");
+  };
+
+  useEffect(() => {
+    if (editingRowIndex === null) return;
+
+    const rowElement = document.querySelector(
+      `[data-preview-row-index="${editingRowIndex}"]`
+    );
+
+    rowElement?.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+      inline: "center",
+    });
+
+    editingInputRef.current?.focus({ preventScroll: true });
+  }, [editingRowIndex]);
+
+  const handleEditChange = (column, value) => {
+    setEditingRowData((previousData) => ({
+      ...previousData,
+      [column]: value,
+    }));
+  };
+
+  const handleCancelEdit = () => {
+    setEditingRowIndex(null);
+    setEditingRowData({});
+  };
+
+  const handleRevalidate = async (rowsToValidate) => {
+    setRevalidating(true);
+    setMessage("");
+    setError("");
+    setErrorDetails([]);
+
+    try {
+      const token = localStorage.getItem("gspl_admin_token");
+
+      if (!token) {
+        navigate("/admin/login");
+        return false;
+      }
+
+      const response = await api.post(
+        "/import/validate-corrected",
+        {
+          rows: rowsToValidate,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+
+
+      const responseData = response.data || {};
+
+      setPreviewData(responseData.data || rowsToValidate);
+      setPreviewColumns(responseData.columns || previewColumns);
+      setDuplicates(responseData.duplicates || []);
+      setErrorDetails(responseData.invalidRows || []);
+
+      if ((responseData.duplicates || []).length > 0) {
+        setMessage(
+          "Duplicate records still exist. Please correct them before importing."
+        );
+        return false;
+      }
+
+      if ((responseData.invalidRows || []).length > 0) {
+        setMessage(
+          "Some rows still contain validation errors. Please correct them before importing."
+        );
+        return false;
+      }
+
+      setMessage(
+        responseData.message ||
+        "Data corrected and revalidated successfully. You can now import."
+      );
+
+      return true;
+    } catch (err) {
+      const responseData = err.response?.data || {};
+
+      setPreviewData(responseData.data || rowsToValidate);
+      setPreviewColumns(responseData.columns || previewColumns);
+      setDuplicates(responseData.duplicates || []);
+      setErrorDetails(responseData.invalidRows || []);
+
+      setError(
+        responseData.message ||
+        err.message ||
+        "Failed to revalidate corrected data."
+      );
+
+      return false;
+    } finally {
+      setRevalidating(false);
+    }
+  };
+
+  const handleSaveCorrection = async () => {
+    if (editingRowIndex === null) {
+      return;
+    }
+
+    const updatedRows = [...previewData];
+
+    updatedRows[editingRowIndex] = {
+      ...editingRowData,
+    };
+
+    setPreviewData(updatedRows);
+
+    setEditingRowIndex(null);
+    setEditingRowData({});
+
+    await handleRevalidate(updatedRows);
+  };
+
   const handleImport = async () => {
-    if (!file) {
-      setError("Please select an Excel file first.");
+    if (!previewData || previewData.length === 0) {
+      setError("Please preview an Excel file before importing.");
+      return;
+    }
+
+    if (duplicates.length > 0) {
+      setError(
+        "Import is blocked because duplicate records still exist. Please correct all duplicates first."
+      );
+      return;
+    }
+
+    if (errorDetails.length > 0) {
+      setError(
+        "Import is blocked because some rows still contain validation errors. Please correct them first."
+      );
+      return;
+    }
+
+    if (editingRowIndex !== null) {
+      setError("Please save or cancel the current row edit before importing.");
       return;
     }
 
     const confirmed = window.confirm(
-      "Are you sure you want to import this Excel file into the employee directory?"
+      "Are you sure you want to import the corrected employee data?"
     );
 
     if (!confirmed) {
@@ -1613,43 +1829,232 @@ function AdminImport() {
     setImportLoading(true);
     setMessage("");
     setError("");
-    setErrorDetails([]);
     setImportResult(null);
 
     try {
-      const formData = new FormData();
-      formData.append("file", file);
+      const token = localStorage.getItem("gspl_admin_token");
+
+      if (!token) {
+        navigate("/admin/login");
+        return;
+      }
 
       const response = await api.post(
-        "/import/import",
-        formData,
+        "/import/import-corrected",
+        {
+          rows: previewData,
+        },
         {
           headers: {
             Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
         }
       );
 
-      setImportResult(response.data);
+      const responseData = response.data || {};
 
-      setMessage("Excel import completed successfully.");
+      setImportResult(responseData);
 
-      setPreviewData([]);
-      setPreviewColumns([]);
-      setFile(null);
-
-      document.getElementById("excel-file-input").value = "";
-    } catch (error) {
-      const responseData = error.response?.data;
-
-      setError(
-        responseData?.message ||
-          "Failed to import Excel data."
+      setMessage(
+        responseData.message || "Employee data imported successfully."
       );
 
-      setErrorDetails(responseData?.invalidRows || []);
+      // Clear the current upload after successful import
+      setFile(null);
+      setPreviewData([]);
+      setPreviewColumns([]);
+      setDuplicates([]);
+      setErrorDetails([]);
+      setEditingRowIndex(null);
+      setEditingRowData({});
+
+      const fileInput = document.getElementById("excel-file");
+
+      if (fileInput) {
+        fileInput.value = "";
+      }
+    } catch (err) {
+      const responseData = err.response?.data || {};
+
+      // Keep corrected data visible if backend blocks the import
+      setPreviewData(responseData.data || previewData);
+      setPreviewColumns(responseData.columns || previewColumns);
+      setDuplicates(responseData.duplicates || []);
+      setErrorDetails(responseData.invalidRows || []);
+
+      setError(
+        responseData.message ||
+        err.message ||
+        "Failed to import employee data."
+      );
     } finally {
       setImportLoading(false);
+    }
+  };
+
+  const getDuplicateRowIndexes = () => {
+    const indexes = new Set();
+
+    duplicates.forEach((duplicate) => {
+      if (Array.isArray(duplicate.rows)) {
+        duplicate.rows.forEach((rowNumber) => {
+          const rowIndex = Number(rowNumber) - 2;
+
+          if (rowIndex >= 0 && rowIndex < previewData.length) {
+            indexes.add(rowIndex);
+          }
+        });
+      }
+
+      if (duplicate.row !== undefined && duplicate.row !== null) {
+        const rowIndex = Number(duplicate.row) - 2;
+
+        if (rowIndex >= 0 && rowIndex < previewData.length) {
+          indexes.add(rowIndex);
+        }
+      }
+    });
+
+    return indexes;
+  };
+
+  const duplicateRowIndexes = getDuplicateRowIndexes();
+
+  // ================= INTENTIONAL DUPLICATE SELECTION =================
+
+  const toggleDuplicateRow = (rowIndex) => {
+    setSelectedDuplicateRows((previousRows) => {
+      if (previousRows.includes(rowIndex)) {
+        return previousRows.filter((index) => index !== rowIndex);
+      }
+
+      return [...previousRows, rowIndex];
+    });
+  };
+
+  const toggleSelectAllDuplicates = () => {
+    const allDuplicateIndexes = Array.from(duplicateRowIndexes);
+
+    if (
+      allDuplicateIndexes.length > 0 &&
+      selectedDuplicateRows.length === allDuplicateIndexes.length
+    ) {
+      setSelectedDuplicateRows([]);
+    } else {
+      setSelectedDuplicateRows(allDuplicateIndexes);
+    }
+  };
+
+  const handleImportSelectedDuplicates = async (
+    selectedDuplicateIndexes
+  ) => {
+    if (
+      !Array.isArray(selectedDuplicateIndexes) ||
+      selectedDuplicateIndexes.length === 0
+    ) {
+      setError("Please select at least one duplicate row to upload.");
+      return;
+    }
+
+    const selectedIndexes = new Set(
+      selectedDuplicateIndexes.filter((index) =>
+        duplicateRowIndexes.has(index)
+      )
+    );
+
+    if (selectedIndexes.size === 0) {
+      setError("Please select at least one duplicate row to upload.");
+      return;
+    }
+
+    // Import all non-duplicate rows plus only the selected duplicate rows.
+    const rowsToImport = previewData.filter(
+      (_, index) =>
+        !duplicateRowIndexes.has(index) || selectedIndexes.has(index)
+    );
+
+    const nonDuplicateCount =
+      previewData.length - duplicateRowIndexes.size;
+    const selectedCount = selectedIndexes.size;
+
+    const confirmed = window.confirm(
+      `You are about to import ${rowsToImport.length} employee record(s).\n\n` +
+      `Intentional duplicates selected: ${selectedCount}\n` +
+      `Non-duplicate records included: ${nonDuplicateCount}\n\n` +
+      `Selected duplicates will be saved as separate employee records. ` +
+      `All non-duplicate rows will also be imported.\n\nContinue?`
+    );
+
+    if (!confirmed) return;
+
+    setDuplicateImportLoading(true);
+    setMessage("");
+    setError("");
+    setImportResult(null);
+
+    try {
+      const token = localStorage.getItem("gspl_admin_token");
+
+      if (!token) {
+        navigate("/admin/login");
+        return;
+      }
+
+      const response = await api.post(
+        "/import/import-duplicates",
+        {
+          rows: rowsToImport,
+          forceDuplicateImport: true,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const responseData = response.data || {};
+
+      setImportResult({
+        ...responseData,
+        duplicateCount: 0,
+        duplicates: [],
+      });
+
+      setMessage(
+        `Import successful: ${responseData.importedCount} record(s) imported, ` +
+        `including ${selectedCount} intentionally selected duplicate(s) ` +
+        `and ${nonDuplicateCount} non-duplicate record(s).`
+      );
+
+      // Clear the completed upload to reduce accidental repeat imports.
+      setFile(null);
+      setPreviewData([]);
+      setPreviewColumns([]);
+      setDuplicates([]);
+      setErrorDetails([]);
+      setSelectedDuplicateRows([]);
+      setEditingRowIndex(null);
+      setEditingRowData({});
+
+      const fileInput = document.getElementById("excel-file-input");
+      if (fileInput) fileInput.value = "";
+    } catch (err) {
+      const responseData = err.response?.data || {};
+
+      setError(
+        responseData.message ||
+        err.message ||
+        "Failed to import employee records."
+      );
+
+      setPreviewData(responseData.data || previewData);
+      setDuplicates(responseData.duplicates || duplicates);
+      setErrorDetails(responseData.invalidRows || errorDetails);
+    } finally {
+      setDuplicateImportLoading(false);
     }
   };
 
@@ -1661,22 +2066,22 @@ function AdminImport() {
 
         <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
-          <button
-  type="button"
-  onClick={() => {
-    const adminToken = localStorage.getItem("gspl_admin_token");
+            <button
+              type="button"
+              onClick={() => {
+                const adminToken = localStorage.getItem("gspl_admin_token");
 
-    if (adminToken) {
-      navigate("/admin/dashboard");
-    } else {
-      navigate("/");
-    }
-  }}
-  aria-label="Go to Dashboard"
-  className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg bg-blue-800 shadow-sm transition hover:bg-blue-900"
->
-  <span className="text-lg font-extrabold text-white">G</span>
-</button>
+                if (adminToken) {
+                  navigate("/admin/dashboard");
+                } else {
+                  navigate("/");
+                }
+              }}
+              aria-label="Go to Dashboard"
+              className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg bg-blue-800 shadow-sm transition hover:bg-blue-900"
+            >
+              <span className="text-lg font-extrabold text-white">G</span>
+            </button>
 
             <div>
               <h1 className="text-xl font-bold tracking-tight text-slate-900">
@@ -1809,6 +2214,10 @@ function AdminImport() {
               <p className="mt-1 text-sm font-medium text-blue-700">
                 Employee Name, Designation, Department, Company,
                 Extension, Mobile No
+              </p>
+
+              <p className="mt-1 text-xs font-medium text-blue-600">
+                Email is optional.
               </p>
             </div>
 
@@ -1977,6 +2386,180 @@ function AdminImport() {
         {/* ================= PREVIEW ================= */}
         {previewData.length > 0 && (
           <section className="mt-5 overflow-hidden rounded-xl border border-slate-300 bg-white shadow-sm">
+            <div className="flex flex-col gap-4 border-b border-slate-200 bg-slate-50 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6"></div>
+
+
+            {duplicates.length > 0 && (
+              <div className="border-b border-red-200 bg-red-50 p-5">
+                <div className="mb-4">
+
+                  <h3 className="text-lg font-semibold text-red-800">
+                    Duplicate Records Found
+                  </h3>
+
+                  <p className="mt-1 text-sm text-red-700">
+                    Review duplicate records. You can correct them or explicitly
+                    choose to import selected duplicates as separate employee records.
+                  </p>
+
+                  <div className="mt-4 flex flex-wrap items-center gap-3">
+                    <label className="inline-flex cursor-pointer items-center gap-2 text-sm font-semibold text-slate-700">
+                      <input
+                        type="checkbox"
+                        checked={
+                          duplicateRowIndexes.size > 0 &&
+                          selectedDuplicateRows.length === duplicateRowIndexes.size
+                        }
+                        onChange={toggleSelectAllDuplicates}
+                        disabled={
+                          duplicateImportLoading ||
+                          importLoading ||
+                          revalidating ||
+                          duplicateRowIndexes.size === 0
+                        }
+                        className="h-4 w-4 rounded border-slate-300"
+                      />
+                      Select All Duplicates ({duplicateRowIndexes.size})
+                    </label>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        handleImportSelectedDuplicates(selectedDuplicateRows)
+                      }
+                      disabled={
+                        selectedDuplicateRows.length === 0 ||
+                        duplicateImportLoading ||
+                        importLoading ||
+                        revalidating ||
+                        editingRowIndex !== null
+                      }
+                      className="rounded-lg bg-amber-600 px-4 py-2 text-sm font-bold text-white hover:bg-amber-700 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      {duplicateImportLoading
+                        ? "Uploading Duplicates..."
+                        : `Upload Selected Duplicates (${selectedDuplicateRows.length})`}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        handleImportSelectedDuplicates(
+                          Array.from(duplicateRowIndexes)
+                        )
+                      }
+                      disabled={
+                        duplicateRowIndexes.size === 0 ||
+                        duplicateImportLoading ||
+                        importLoading ||
+                        revalidating ||
+                        editingRowIndex !== null
+                      }
+                      className="rounded-lg bg-red-700 px-4 py-2 text-sm font-bold text-white hover:bg-red-800 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      Upload All Duplicates ({duplicateRowIndexes.size})
+                    </button>
+                  </div>
+
+                </div>
+
+                <div className="space-y-3">
+                  {duplicates.map((duplicate, index) => {
+                    const duplicateRows = Array.isArray(duplicate.rows)
+                      ? duplicate.rows
+                      : duplicate.row !== undefined
+                        ? [duplicate.row]
+                        : [];
+
+                    return (
+                      <div
+                        key={`${duplicate.field || "duplicate"}-${duplicate.value || ""}-${index}`}
+                        className="rounded-lg border border-red-200 bg-white p-4"
+                      >
+                        <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                          <div>
+                            <p className="font-semibold text-slate-800">
+                              {duplicate.message ||
+                                `Duplicate ${duplicate.field || "value"} found`}
+                            </p>
+
+                            {duplicate.field && (
+                              <p className="mt-1 text-sm text-slate-600">
+                                <span className="font-medium">Field:</span>{" "}
+                                {duplicate.field}
+                              </p>
+                            )}
+
+                            {duplicate.value !== undefined &&
+                              duplicate.value !== null &&
+                              duplicate.value !== "" && (
+                                <p className="text-sm text-slate-600">
+                                  <span className="font-medium">Value:</span>{" "}
+                                  {String(duplicate.value)}
+                                </p>
+                              )}
+
+                            {duplicateRows.length > 0 && (
+                              <p className="text-sm text-slate-600">
+                                <span className="font-medium">Excel row(s):</span>{" "}
+                                {duplicateRows.join(", ")}
+                              </p>
+                            )}
+
+                            {duplicate.existingEmployee && (
+                              <p className="mt-1 text-sm text-slate-600">
+                                <span className="font-medium">
+                                  Existing employee:
+                                </span>{" "}
+                                {duplicate.existingEmployee.employeeName ||
+                                  duplicate.existingEmployee.name ||
+                                  "Already exists in database"}
+                              </p>
+                            )}
+                          </div>
+
+                          <div className="flex flex-wrap gap-2">
+                            {duplicateRows.map((rowNumber) => {
+                              const rowIndex = Number(rowNumber) - 2;
+
+                              if (
+                                rowIndex < 0 ||
+                                rowIndex >= previewData.length
+                              ) {
+                                return null;
+                              }
+
+                              return (
+                                <button
+                                  key={`edit-${rowNumber}`}
+                                  type="button"
+                                  onClick={() => handleStartEdit(rowIndex)}
+                                  disabled={
+                                    editingRowIndex !== null ||
+                                    revalidating ||
+                                    importLoading
+                                  }
+                                  className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
+                                >
+                                  Edit Row {rowNumber}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-3">
+                  <p className="text-sm font-medium text-amber-800">
+                    Import is blocked until all duplicate records are corrected
+                    and successfully revalidated.
+                  </p>
+                </div>
+              </div>
+            )}
             <div className="flex flex-col gap-4 border-b border-slate-200 bg-slate-50 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
               <div>
                 <div className="flex items-center gap-2">
@@ -2009,7 +2592,13 @@ function AdminImport() {
               <button
                 type="button"
                 onClick={handleImport}
-                disabled={importLoading}
+                disabled={
+                  importLoading ||
+                  revalidating ||
+                  editingRowIndex !== null ||
+                  duplicates.length > 0 ||
+                  errorDetails.length > 0
+                }
                 className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-green-700 px-5 text-sm font-bold text-white shadow-sm transition hover:bg-green-800 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {importLoading ? (
@@ -2043,6 +2632,9 @@ function AdminImport() {
               <table className="min-w-full text-left text-sm">
                 <thead className="bg-slate-700 text-white">
                   <tr>
+                    <th className="whitespace-nowrap px-4 py-3 text-xs font-bold uppercase tracking-wide">
+                      Select Duplicate
+                    </th>
                     {previewColumns.map((column) => (
                       <th
                         key={column}
@@ -2051,36 +2643,127 @@ function AdminImport() {
                         {column}
                       </th>
                     ))}
+                    <th className="whitespace-nowrap px-4 py-3 text-xs font-bold uppercase tracking-wide">
+                      Action
+                    </th>
                   </tr>
                 </thead>
 
                 <tbody className="divide-y divide-slate-200">
-                  {previewData.map((row, index) => (
-                    <tr
-                      key={index}
-                      className={
-                        index % 2 === 0
-                          ? "bg-white"
-                          : "bg-slate-50"
-                      }
-                    >
-                      {previewColumns.map((column) => (
-                        <td
-                          key={column}
-                          className="whitespace-nowrap border-r border-slate-200 px-4 py-3 text-slate-700 last:border-r-0"
-                        >
-                          {row[column]}
+                  {previewData.map((row, index) => {
+                    const isEditing = editingRowIndex === index;
+                    const isDuplicate = duplicateRowIndexes.has(index);
+
+                    return (
+                      <tr
+                        key={index}
+                        data-preview-row-index={index}
+                        className={
+                          isEditing
+                            ? "bg-blue-100 ring-2 ring-inset ring-blue-500"
+                            : isDuplicate
+                              ? "bg-red-50"
+                              : index % 2 === 0
+                                ? "bg-white"
+                                : "bg-slate-50"
+                        }
+                      >
+
+
+                        <td className="whitespace-nowrap border-r border-slate-200 px-4 py-3">
+                          {isDuplicate ? (
+                            <input
+                              type="checkbox"
+                              checked={selectedDuplicateRows.includes(index)}
+                              onChange={() => toggleDuplicateRow(index)}
+                              disabled={
+                                duplicateImportLoading ||
+                                importLoading ||
+                                revalidating ||
+                                editingRowIndex !== null
+                              }
+                              aria-label={`Select duplicate employee row ${index + 2}`}
+                              className="h-4 w-4 rounded border-slate-300"
+                            />
+                          ) : (
+                            <span className="text-slate-300">—</span>
+                          )}
                         </td>
-                      ))}
-                    </tr>
-                  ))}
+
+
+                        {previewColumns.map((column, columnIndex) => (
+                          <td
+                            key={column}
+                            className="whitespace-nowrap border-r border-slate-200 px-4 py-3 text-slate-700 last:border-r-0"
+                          >
+                            {isEditing ? (
+                              <input
+                                ref={columnIndex === 0 ? editingInputRef : null}
+                                type="text"
+                                value={
+                                  editingRowData[column] !== undefined
+                                    ? String(editingRowData[column])
+                                    : ""
+                                }
+                                onChange={(event) =>
+                                  handleEditChange(column, event.target.value)
+                                }
+                                className="w-full min-w-[160px] rounded-md border border-blue-300 bg-white px-3 py-2 text-sm text-slate-800 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                              />
+                            ) : (
+                              <span>{row[column] ?? ""}</span>
+                            )}
+                          </td>
+                        ))}
+
+                        <td className="whitespace-nowrap px-4 py-3">
+                          {isEditing ? (
+                            <div className="flex gap-2">
+                              <button
+                                type="button"
+                                onClick={handleSaveCorrection}
+                                disabled={revalidating}
+                                className="rounded-md bg-green-600 px-3 py-2 text-xs font-semibold text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
+                              >
+                                {revalidating ? "Saving..." : "Save"}
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={handleCancelEdit}
+                                disabled={revalidating}
+                                className="rounded-md bg-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-300 disabled:cursor-not-allowed disabled:opacity-50"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          ) : isDuplicate ? (
+                            <button
+                              type="button"
+                              onClick={() => handleStartEdit(index)}
+                              disabled={
+                                editingRowIndex !== null ||
+                                revalidating ||
+                                importLoading
+                              }
+                              className="rounded-md bg-red-600 px-3 py-2 text-xs font-semibold text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
+                            >
+                              Edit
+                            </button>
+                          ) : (
+                            <span className="text-xs text-slate-400">-</span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
 
             <div className="border-t border-slate-200 bg-slate-50 px-5 py-3">
               <p className="text-xs font-medium text-slate-500">
-                Showing the first 10 rows for preview.
+                Showing all {previewData.length} rows from the Excel file.
               </p>
             </div>
           </section>
@@ -2215,13 +2898,13 @@ function App() {
         />
 
         <Route
-  path="/admin/employees/add"
-  element={
-    <ProtectedRoute>
-      <AddEmployee />
-    </ProtectedRoute>
-  }
-/>
+          path="/admin/employees/add"
+          element={
+            <ProtectedRoute>
+              <AddEmployee />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/admin/employees/edit/:id"
           element={
@@ -2230,16 +2913,14 @@ function App() {
             </ProtectedRoute>
           } />
 
-          <Route
-  path="/admin/change-password"
-  element={
-    <ProtectedRoute>
-      <ChangePassword />
-    </ProtectedRoute>
-  }
-/>
-
-          
+        <Route
+          path="/admin/change-password"
+          element={
+            <ProtectedRoute>
+              <ChangePassword />
+            </ProtectedRoute>
+          }
+        />
 
       </Routes>
     </BrowserRouter>

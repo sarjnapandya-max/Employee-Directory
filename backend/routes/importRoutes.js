@@ -6,7 +6,12 @@ const {
   uploadExcelFile,
   previewExcelFile,
   importExcelData,
+  validateCorrectedExcelData,
+  importCorrectedExcelData,
+  importDuplicateExcelData,
 } = require("../controllers/importController");
+
+
 const { protect } = require("../middleware/authMiddleware");
 const { superAdminOnly } = require("../middleware/roleMiddleware");
 
@@ -52,6 +57,7 @@ router.post(
   uploadExcelFile
 );
 
+// Excel preview route
 router.post(
   "/preview",
   protect,
@@ -60,6 +66,7 @@ router.post(
   previewExcelFile
 );
 
+// Original Excel import route
 router.post(
   "/import",
   protect,
@@ -68,6 +75,28 @@ router.post(
   importExcelData
 );
 
+// Validate corrected preview data
+router.post(
+  "/validate-corrected",
+  protect,
+  superAdminOnly,
+  validateCorrectedExcelData
+);
+
+// Import corrected preview data
+router.post(
+  "/import-corrected",
+  protect,
+  superAdminOnly,
+  importCorrectedExcelData
+);
+
+router.post(
+  "/import-duplicates",
+  protect,
+  superAdminOnly,
+  importDuplicateExcelData
+);
 module.exports = {
   router,
   upload,
