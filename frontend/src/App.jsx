@@ -1545,6 +1545,7 @@ function AdminImport() {
   // Intentional duplicate import
   const [selectedDuplicateRows, setSelectedDuplicateRows] = useState([]);
   const [duplicateImportLoading, setDuplicateImportLoading] = useState(false);
+  const [replaceTargets, setReplaceTargets] = useState({});
 
   const token = localStorage.getItem("gspl_admin_token");
 
@@ -1943,6 +1944,70 @@ function AdminImport() {
       setSelectedDuplicateRows([]);
     } else {
       setSelectedDuplicateRows(allDuplicateIndexes);
+    }
+  };
+
+  const handleReplaceSelectedDuplicates = async (selectedDuplicateIndexes) => {
+    if (!Array.isArray(selectedDuplicateIndexes) || selectedDuplicateIndexes.length === 0) {
+      setError("Select at least one duplicate row to replace.");
+      return;
+    }
+    const selectedIndexes = new Set(selectedDuplicateIndexes.filter((index) => duplicateRowIndexes.has(index)));
+    if (!selectedIndexes.size) {
+      setError("Select at least one duplicate row to replace.");
+      return;
+    }
+    const replaceMappings = {};
+    for (const index of selectedIndexes) {
+      const targetId = replaceTargets[index];
+      if (!targetId) {
+        setError(`Select the existing employee to replace for Excel row ${index + 2}. Rows that only duplicate other Excel rows must be corrected or imported using the intentional duplicate option.`);
+        return;
+      }
+      replaceMappings[String(index + 2)] = targetId;
+    }
+
+    const rowsToImport = previewData.filter((_, index) => !duplicateRowIndexes.has(index) || selectedIndexes.has(index));
+    const rowNumbers = previewData.map((_, index) => index + 2).filter((_, index) => !duplicateRowIndexes.has(index) || selectedIndexes.has(index));
+    const confirmed = window.confirm(
+      `Process ${rowsToImport.length} row(s)?\n\n` +
+      `${previewData.length - duplicateRowIndexes.size} non-duplicate row(s) will be imported, and ${selectedIndexes.size} selected existing employee record(s) will be replaced.\n\nThis overwrites the selected employee details, including clearing email if the Excel email is blank. Continue?`
+    );
+    if (!confirmed) return;
+
+    setDuplicateImportLoading(true);
+    setMessage("");
+    setError("");
+    setImportResult(null);
+    try {
+      const token = localStorage.getItem("gspl_admin_token");
+      if (!token) {
+        navigate("/admin/login");
+        return;
+      }
+      const response = await api.post("/import/import-duplicates", {
+        rows: rowsToImport,
+        rowNumbers,
+        replaceMappings,
+        forceDuplicateImport: true,
+      }, {
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      });
+      const responseData = response.data || {};
+      setImportResult(responseData);
+      setMessage(responseData.message || "Excel processing completed.");
+      setPreviewData([]);
+      setPreviewColumns([]);
+      setDuplicates([]);
+      setSelectedDuplicateRows([]);
+      setReplaceTargets({});
+      setFile(null);
+    } catch (err) {
+      const responseData = err.response?.data || {};
+      setDuplicates(responseData.duplicates || duplicates);
+      setError(responseData.message || err.message || "Failed to replace duplicate employee records.");
+    } finally {
+      setDuplicateImportLoading(false);
     }
   };
 
@@ -2424,6 +2489,15 @@ function AdminImport() {
 
                     <button
                       type="button"
+                      onClick={() => handleReplaceSelectedDuplicates(selectedDuplicateRows)}
+                      disabled={selectedDuplicateRows.length === 0 || duplicateImportLoading || importLoading || revalidating || editingRowIndex !== null}
+                      className="rounded-lg bg-blue-800 px-4 py-2 text-sm font-bold text-white hover:bg-blue-900 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      Replace Selected Existing Records
+                    </button>
+
+                    <button
+                      type="button"
                       onClick={() =>
                         handleImportSelectedDuplicates(selectedDuplicateRows)
                       }
@@ -2508,13 +2582,25 @@ function AdminImport() {
 
                             {duplicate.existingEmployee && (
                               <p className="mt-1 text-sm text-slate-600">
-                                <span className="font-medium">
-                                  Existing employee:
-                                </span>{" "}
-                                {duplicate.existingEmployee.employeeName ||
-                                  duplicate.existingEmployee.name ||
-                                  "Already exists in database"}
+                                <span className="font-medium">Existing employee:</span>{" "}
+                                {duplicate.existingEmployee.employeeName || duplicate.existingEmployee.name || "Already exists in database"}
                               </p>
+                            )}
+                            {duplicate.type === "database" && Array.isArray(duplicate.matchingEmployees) && duplicate.matchingEmployees.length > 0 && duplicate.row !== undefined && (
+                              <div className="mt-3 max-w-xl">
+                                <label htmlFor={`replace-target-${duplicate.row}`} className="mb-1 block text-xs font-bold text-slate-700">Existing employee to replace for row {duplicate.row}</label>
+                                <select
+                                  id={`replace-target-${duplicate.row}`}
+                                  value={replaceTargets[Number(duplicate.row) - 2] || ""}
+                                  onChange={(event) => setReplaceTargets((previous) => ({ ...previous, [Number(duplicate.row) - 2]: event.target.value }))}
+                                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800"
+                                >
+                                  <option value="">Choose matching employee...</option>
+                                  {duplicate.matchingEmployees.map((employee) => (
+                                    <option key={employee._id} value={employee._id}>{employee.employeeName} — {employee.company || "No company"} — Ext. {employee.extension || "—"} — {employee.mobileNo || "—"}</option>
+                                  ))}
+                                </select>
+                              </div>
                             )}
                           </div>
 

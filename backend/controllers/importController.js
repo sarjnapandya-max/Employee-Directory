@@ -1,8 +1,9 @@
-const fs = require("fs");
+﻿const fs = require("fs");
 
 const XLSX = require("xlsx");
 
 const Employee = require("../models/Employee");
+const mongoose = require("mongoose");
 
 
 
@@ -73,17 +74,6 @@ const buildEmployeesFromRows = (normalizedRows) => {
   }));
 };
 
-
-
-
-/*
-
- * Normalize values for duplicate comparison.
-
- * This does not change the actual data saved to MongoDB.
-
- */
-
 const normalizeDuplicateValue = (value) =>
 
   String(value || "")
@@ -91,14 +81,6 @@ const normalizeDuplicateValue = (value) =>
     .trim()
 
     .toLowerCase();
-
-
-
-/*
-
- * Check duplicates inside the uploaded Excel file.
-
- */
 
 const findExcelDuplicates = (employees) => {
 
@@ -218,16 +200,6 @@ const findExcelDuplicates = (employees) => {
 
   });
 
-
-
-  /*
-
-   * Employee Name is checked together with Company.
-
-   * This preserves the existing duplicate identity rule.
-
-   */
-
   const employeeNameCompanyMap = new Map();
 
 
@@ -321,297 +293,61 @@ const findExcelDuplicates = (employees) => {
 };
 
 
-
-/*
-
- * Check duplicates against employees already present in MongoDB.
-
- */
-
 const findDatabaseDuplicates = async (employees) => {
-
   const duplicates = [];
-
-
+  const normalize = (value) => String(value || "").trim().toLowerCase();
+  const fields = [
+    { key: "employeeName", label: "Employee Name", regex: true },
+    { key: "extension", label: "Extension" },
+    { key: "mobileNo", label: "Mobile No" },
+    { key: "email", label: "Email", regex: true, optional: true },
+  ];
 
   for (let index = 0; index < employees.length; index++) {
-
     const employee = employees[index];
-
     const rowNumber = index + 2;
+    const matchingById = new Map();
+    const matchedFields = [];
 
+    for (const field of fields) {
+      const value = normalize(employee[field.key]);
+      if (!value && field.optional) continue;
+      if (!value) continue;
+      const query = field.regex
+        ? { [field.key]: { $regex: `^${String(employee[field.key]).trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`, $options: "i" } }
+        : { [field.key]: String(employee[field.key]).trim() };
+      const matches = await Employee.find(query).limit(100);
+      if (matches.length) {
+        matchedFields.push({ field: field.label, value: employee[field.key] });
+        matches.forEach((match) => matchingById.set(String(match._id), match));
+      }
+    }
 
-
-    /*
-
-     * Existing duplicate rule:
-
-     * Employee Name + Company
-
-     */
-
-    const existingByNameAndCompany =
-
-      await Employee.findOne({
-
-        employeeName: employee.employeeName,
-
-        company: employee.company,
-
-      });
-
-
-
-    if (existingByNameAndCompany) {
-
+    if (matchingById.size) {
+      const matchingEmployees = Array.from(matchingById.values()).map((existing) => ({
+        _id: existing._id,
+        employeeName: existing.employeeName,
+        designation: existing.designation,
+        department: existing.department,
+        company: existing.company,
+        extension: existing.extension,
+        mobileNo: existing.mobileNo,
+        email: existing.email || "",
+      }));
       duplicates.push({
-
         type: "database",
-
-        field: "Employee Name",
-
-        value: employee.employeeName,
-
+        field: matchedFields.map((item) => item.field).join(", "),
+        value: matchedFields.map((item) => `${item.field}: ${item.value}`).join("; "),
         row: rowNumber,
-
         employeeName: employee.employeeName,
-
-        existingEmployee: {
-
-          employeeName:
-
-            existingByNameAndCompany.employeeName,
-
-          company:
-
-            existingByNameAndCompany.company,
-
-          extension:
-
-            existingByNameAndCompany.extension,
-
-          mobileNo:
-
-            existingByNameAndCompany.mobileNo,
-
-          email:
-
-            existingByNameAndCompany.email || "",
-
-        },
-
-        message: `Employee Name "${employee.employeeName}" already exists for Company "${employee.company}" in the employee directory.`,
-
+        matchedFields,
+        matchingEmployees,
+        existingEmployee: matchingEmployees[0],
+        message: `Excel row ${rowNumber} matches ${matchingEmployees.length} existing employee record(s) by ${matchedFields.map((item) => item.field).join(", ")}. Select the correct record before replacing.`,
       });
-
     }
-
-
-
-    /*
-
-     * Extension duplicate
-
-     */
-
-    if (employee.extension) {
-
-      const existingByExtension =
-
-        await Employee.findOne({
-
-          extension: employee.extension,
-
-        });
-
-
-
-      if (existingByExtension) {
-
-        duplicates.push({
-
-          type: "database",
-
-          field: "Extension",
-
-          value: employee.extension,
-
-          row: rowNumber,
-
-          employeeName: employee.employeeName,
-
-          existingEmployee: {
-
-            employeeName:
-
-              existingByExtension.employeeName,
-
-            company:
-
-              existingByExtension.company,
-
-            extension:
-
-              existingByExtension.extension,
-
-            mobileNo:
-
-              existingByExtension.mobileNo,
-
-            email:
-
-              existingByExtension.email || "",
-
-          },
-
-          message: `Extension "${employee.extension}" already exists for "${existingByExtension.employeeName}".`,
-
-        });
-
-      }
-
-    }
-
-
-
-    /*
-
-     * Mobile No duplicate
-
-     */
-
-    if (employee.mobileNo) {
-
-      const existingByMobile =
-
-        await Employee.findOne({
-
-          mobileNo: employee.mobileNo,
-
-        });
-
-
-
-      if (existingByMobile) {
-
-        duplicates.push({
-
-          type: "database",
-
-          field: "Mobile No",
-
-          value: employee.mobileNo,
-
-          row: rowNumber,
-
-          employeeName: employee.employeeName,
-
-          existingEmployee: {
-
-            employeeName:
-
-              existingByMobile.employeeName,
-
-            company:
-
-              existingByMobile.company,
-
-            extension:
-
-              existingByMobile.extension,
-
-            mobileNo:
-
-              existingByMobile.mobileNo,
-
-            email:
-
-              existingByMobile.email || "",
-
-          },
-
-          message: `Mobile No "${employee.mobileNo}" already exists for "${existingByMobile.employeeName}".`,
-
-        });
-
-      }
-
-    }
-
-
-
-    /*
-
-     * Email duplicate
-
-     * Email is optional, so blank email values are ignored.
-
-     */
-
-    if (employee.email) {
-
-      const existingByEmail =
-
-        await Employee.findOne({
-
-          email: employee.email.toLowerCase(),
-
-        });
-
-
-
-      if (existingByEmail) {
-
-        duplicates.push({
-
-          type: "database",
-
-          field: "Email",
-
-          value: employee.email,
-
-          row: rowNumber,
-
-          employeeName: employee.employeeName,
-
-          existingEmployee: {
-
-            employeeName:
-
-              existingByEmail.employeeName,
-
-            company:
-
-              existingByEmail.company,
-
-            extension:
-
-              existingByEmail.extension,
-
-            mobileNo:
-
-              existingByEmail.mobileNo,
-
-            email:
-
-              existingByEmail.email || "",
-
-          },
-
-          message: `Email "${employee.email}" already exists for "${existingByEmail.employeeName}".`,
-
-        });
-
-      }
-
-    }
-
   }
-
-
-
   return duplicates;
-
 };
 
 const validateEmployeesForImport = async (employees) => {
@@ -1925,12 +1661,9 @@ const validateCorrectedExcelData = async (req, res) => {
 
 const importDuplicateExcelData = async (req, res) => {
   try {
-    const { rows, forceDuplicateImport } = req.body;
+    const { rows, forceDuplicateImport, rowNumbers, replaceMappings = {} } = req.body;
 
-    /*
-     * Explicit confirmation is required.
-     * This prevents accidental duplicate insertion.
-     */
+
     if (forceDuplicateImport !== true) {
       return res.status(400).json({
         success: false,
@@ -1950,14 +1683,7 @@ const importDuplicateExcelData = async (req, res) => {
 
     const employees = buildEmployeesFromRows(normalizedRows);
 
-    /*
-     * We still validate required fields and data format.
-     *
-     * IMPORTANT:
-     * Duplicate checking is intentionally skipped here.
-     * This endpoint is specifically for SUPER_ADMIN-approved
-     * duplicate imports.
-     */
+
     const invalidRows =
       await validateEmployeesForImport(employees);
 
@@ -1972,21 +1698,54 @@ const importDuplicateExcelData = async (req, res) => {
     }
 
     /*
-     * Import the selected duplicate records.
+     * Import non-duplicate rows, create explicitly selected duplicates,
+     * or replace the specifically selected existing employee by Mongo ID.
      */
     const importedEmployees = [];
+    const replacedEmployees = [];
+    const safeRowNumbers = Array.isArray(rowNumbers)
+      ? rowNumbers.map((value) => Number(value))
+      : employees.map((_, index) => index + 2);
 
-    for (const employee of employees) {
-      const newEmployee = await Employee.create(employee);
+    for (let index = 0; index < employees.length; index++) {
+      const employeeData = employees[index];
+      const originalRowNumber = safeRowNumbers[index];
+      const targetId = replaceMappings[String(originalRowNumber)];
 
-      importedEmployees.push(newEmployee);
+      if (targetId) {
+        if (!mongoose.Types.ObjectId.isValid(targetId)) {
+          return res.status(400).json({ success: false, message: `Invalid replacement employee ID for Excel row ${originalRowNumber}.` });
+        }
+        const target = await Employee.findById(targetId);
+        if (!target) {
+          return res.status(404).json({ success: false, message: `Replacement employee for Excel row ${originalRowNumber} was not found. Revalidate the file and try again.` });
+        }
+        const conflictChecks = [
+          { field: "Employee Name", query: { employeeName: { $regex: `^${String(employeeData.employeeName).replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`, $options: "i" } } },
+          { field: "Extension", query: { extension: employeeData.extension } },
+          { field: "Mobile No", query: { mobileNo: employeeData.mobileNo } },
+          ...(employeeData.email ? [{ field: "Email", query: { email: { $regex: `^${String(employeeData.email).replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`, $options: "i" } } }] : []),
+        ];
+        for (const check of conflictChecks) {
+          const other = await Employee.findOne({ ...check.query, _id: { $ne: target._id } });
+          if (other) {
+            return res.status(409).json({ success: false, message: `Cannot replace row ${originalRowNumber}: ${check.field} also belongs to another employee (${other.employeeName}).`, conflictEmployee: { _id: other._id, employeeName: other.employeeName } });
+          }
+        }
+        Object.assign(target, employeeData, { email: employeeData.email ? String(employeeData.email).trim() : "" });
+        replacedEmployees.push(await target.save());
+      } else {
+        importedEmployees.push(await Employee.create(employeeData));
+      }
     }
 
     return res.status(201).json({
       success: true,
-      message:
-        "Selected duplicate records imported successfully.",
-      importedCount: importedEmployees.length,
+      message: `Excel processing completed: ${importedEmployees.length} record(s) created and ${replacedEmployees.length} existing record(s) replaced.`,
+      importedCount: importedEmployees.length + replacedEmployees.length,
+      createdCount: importedEmployees.length,
+      replacedCount: replacedEmployees.length,
+      replacedEmployees: replacedEmployees.map((employee) => ({ id: employee._id, employeeName: employee.employeeName })),
       duplicateCount: importedEmployees.length,
       duplicatesImported: importedEmployees.map(
         (employee) => ({
