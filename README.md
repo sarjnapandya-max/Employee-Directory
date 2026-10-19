@@ -2,6 +2,16 @@
 
 A full-stack internal employee directory for Gujarat State Petronet Limited (GSPL). The public can search the directory; a **SUPER_ADMIN** can sign in to add, edit, delete and bulk-import employees from Excel.
 
+## 🚀 Live Application
+
+👉 **[Open GSPL Employee Directory](https://gspl-employee-directory.vercel.app)**
+
+👉 **[Admin Login](https://gspl-employee-directory.vercel.app/admin/login)**
+
+> **For employees:** Use the **Live Application** link above to search the employee directory.
+>
+> **For administrators:** Use the **Admin Login** link to access the administration portal.
+
 > **Naming note:** the repository and several UI strings use "GSPL", while the backend health message and some UI branding use "GTL" (e.g. *"GTL Employee Directory Backend is running"*). Both names appear in the code as-is; this README preserves them.
 
 > **Documentation basis:** this README was written by inspecting the repository at commit `2e3d093` (*"Add employee duplicate detection and replacement"*). Anything the repository cannot answer is marked **Developer must configure/confirm this**.
