@@ -197,7 +197,7 @@ Every variable below was found by searching the source for `process.env` / `impo
 | `MONGO_URI` | Backend | **Yes** | MongoDB connection string used by `config/db.js` (and `checkCompanies.js`). If missing or invalid, the server logs `MongoDB connection failed:` and exits. | `YOUR_MONGODB_CONNECTION_STRING` |
 | `JWT_SECRET` | Backend | **Yes** | Signs/verifies login tokens. `server.js` exits at startup if it is missing or **shorter than 32 characters**. | `YOUR_JWT_SECRET` (≥ 32 chars) |
 | `PORT` | Backend | No (default `5000`) | HTTP port. The server binds to `0.0.0.0`. Hosting platforms typically inject their own value. | `5000` |
-| `FRONTEND_URL` | Backend | Effectively yes in production (default `http://localhost:5173`) | The **single** allowed CORS origin. | `http://localhost:5173` locally; `https://gspl-employee-directory.vercel.app` in production |
+| `FRONTEND_URL` | Backend | Effectively yes in production (default `http://localhost:5173`) | The **single** allowed CORS origin. | https://your-frontend-domain.example in production |
 | `AUTH_MODE` | Backend | No (default `local`) | `local` = username/password stored in MongoDB; `ldap` = verify password against LDAP ([section 16](#16-ldap--active-directory)). Any other value → login returns `Unsupported authentication mode`. | `local` |
 | `LDAP_URL` | Backend | Only if `AUTH_MODE=ldap` | LDAP server host/URL. `ldap://` is prepended if no protocol is given. | `YOUR_LDAP_URL` |
 | `LDAP_PORT` | Backend | Only if `AUTH_MODE=ldap` | Appended to `LDAP_URL` if the URL has no port. | `389` |
@@ -227,7 +227,7 @@ Every variable below was found by searching the source for `process.env` / `impo
 | Variable | Local | Production |
 |---|---|---|
 | `VITE_API_URL` | `http://localhost:5000/api` | `https://your-backend-domain.example/api` (rebuild required) |
-| `FRONTEND_URL` | `http://localhost:5173` | `https://gspl-employee-directory.vercel.app` (scheme included, **no trailing slash**) |
+| `FRONTEND_URL` | `http://localhost:5173` | https://your-frontend-domain.example (scheme included, **no trailing slash**) |
 | `MONGO_URI` | Development database string | Production Atlas string. The database name is hard-coded (see [section 7](#7-mongodb-atlas-configuration)), so use separate clusters or users if you need environment isolation. |
 | `JWT_SECRET` | Throw-away dev value | A different, private production value |
 
