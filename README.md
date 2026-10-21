@@ -2,13 +2,6 @@
 
 A full-stack internal employee directory. Anyone who can reach the site can search the directory; an authenticated **SUPER_ADMIN** can add, edit, delete, and bulk-import employees from Excel files, with duplicate detection and controlled replacement.
 
-## Live Application
-| **Public directory** | [https://gspl-employee-directory.vercel.app](https://gspl-employee-directory.vercel.app) |
-| **Admin login** | [https://gspl-employee-directory.vercel.app/admin/login](https://gspl-employee-directory.vercel.app/admin/login) |
-
-> **For employees:** use the public directory link to search.
-> **For administrators:** use the admin login link to access the administration portal.
-
 ## 1. Overview
 
 **Public directory (`/`)**: anyone who can reach the site can search, sort, and page through employees (name, designation, department, company, extension, mobile number, email). No login is required to read employee data.
