@@ -3,7 +3,6 @@
 A full-stack internal employee directory. Anyone who can reach the site can search the directory; an authenticated **SUPER_ADMIN** can add, edit, delete, and bulk-import employees from Excel files, with duplicate detection and controlled replacement.
 
 ## 1. Overview
-
 **Public directory (`/`)**: anyone who can reach the site can search, sort, and page through employees (name, designation, department, company, extension, mobile number, email). No login is required to read employee data.
 
 **Admin portal (`/admin/...`)**: a SUPER_ADMIN logs in to:
